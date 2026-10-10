@@ -11,7 +11,7 @@ import { generatePrivateKey, privateKeyToAccount } from "viem/accounts";
 import { beforeAll, describe, expect, it } from "vitest";
 import { createApp } from "../app.js";
 import { loadConfig } from "../config.js";
-import { groundedAnswerer } from "./answer.js";
+import { groundedAnswerer, type Answerer } from "./answer.js";
 import { NETWORK } from "./payments.js";
 
 const envFile = new URL("../../../../.env", import.meta.url);
@@ -53,6 +53,7 @@ describe("price check against Supabase", () => {
     expect(order).toMatchObject({
       status: "delivered",
       tx_hash: TX,
+      citations_verified: true,
       answer: outcome.text,
       signature: outcome.signature,
       terms_hash: "0xf9b91ca563e63f98b44f1a83eadfde2a1aa1dfe747467d1a8f91c4fa2f2b0757",
@@ -85,5 +86,32 @@ describe("price check against Supabase", () => {
     const res = await priceCheck({ question: QUESTION, order_id: created!.id });
     expect(SignedOutcome.parse(await res.json()).order_id).toBe(created!.id);
     expect((await priceCheck({ question: QUESTION, order_id: created!.id })).status).toBe(409);
+  });
+});
+
+describe("citation check against Supabase (ticket 09)", () => {
+  it("a tampered quote is not settled: order failed_check + negative reputation event", async () => {
+    const tampered: Answerer = async (input) => {
+      const a = await groundedAnswerer(input);
+      return { ...a, citations: a.citations.map((c, i) => (i === 1 ? { ...c, quote: "Sold for €150,000" } : c)) };
+    };
+    const strictApp = createApp(config, { facilitator: () => facilitator, answer: tampered, now: () => new Date("2026-10-10T12:00:00Z") });
+    const strictPay = wrapFetchWithPaymentFromConfig(((i: RequestInfo | URL, init?: RequestInit) => strictApp.request(i instanceof Request ? i : String(i), init)) as typeof fetch, {
+      schemes: [{ network: NETWORK, client: new ExactEvmScheme(privateKeyToAccount(generatePrivateKey())) }],
+    });
+
+    const res = await strictPay("http://localhost/agents/lozenets-price-check/price-check", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ question: QUESTION }),
+    });
+    expect(res.status).toBe(422);
+    const { order_id, failures } = await res.json();
+    expect(failures).toEqual(["citation 2: quote not found in unit"]);
+
+    const { data: order } = await db.from("orders").select("status, citations_verified, tx_hash").eq("id", order_id).single();
+    expect(order).toEqual({ status: "failed_check", citations_verified: false, tx_hash: null });
+    const { data: events } = await db.from("reputation_events").select("kind, delta, details").eq("order_id", order_id);
+    expect(events).toEqual([{ kind: "citation_check_failed", delta: -1, details: { failures } }]);
   });
 });

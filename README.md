@@ -107,6 +107,7 @@ curl -X POST http://localhost:4010/agents/lozenets-price-check/evaluate \
 - **Who writes the answer:** Claude (`claude-opus-5-5`, structured output) when `ANTHROPIC_API_KEY` is set. Otherwise a deterministic answer built from the comparable deals.
 - **Not charged:** an answer that can't be given from the evidence, or that says "appraisal" or "valuation", returns `422`, and the payment is never settled.
 - **Recorded:** the order stores the answer, citations, signature and Terms hash, and gets the tx hash once the facilitator settles.
+- **Citation check (ticket 09):** before the payment settles, every citation is checked: signature (agent, version, order), unit exists and belongs to the agent, the quote is in the unit, `as_of` matches. Any failure returns `422`, the payment is never settled, the order is marked `failed_check`, and a negative `reputation_events` row is written. Passing orders get `citations_verified = true`, which `get_order` returns for the receipt.
 
 ```sh
 pnpm --filter @citable/connector configure:demo     # after every db reset: signing address (+ AGENT_PAYOUT_ADDRESS) on the demo agents
