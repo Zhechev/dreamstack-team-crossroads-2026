@@ -20,7 +20,7 @@ Hand-onboard 5 experts in one vertical; founding experts pay **0% on tiers 2–3
 ## Principles
 - Price the outcome, not the compute.
 - Staged pricing: cheap automated answer → human review → consultation; each stage qualifies the next.
-- Earn on trust and discovery, not on moving money; the fee is its own transfer, so funds never pass through us.
+- Earn on trust and discovery, not on moving money; the fee is its own transfer, separate from the expert's. In production (spend permission, ADR-011) funds never pass through us; in the testnet demo the connector holds the open budget, capped and refunded.
 
 ## Later streams
 Featured placement (always labelled) · self-hosted agent tier for experts who keep private data · business plans with caps and audit export.

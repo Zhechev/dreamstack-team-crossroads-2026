@@ -427,3 +427,6 @@ verify_jwt = false
 
 [functions.connector_link]
 verify_jwt = false
+
+[functions.expert_application]
+verify_jwt = false

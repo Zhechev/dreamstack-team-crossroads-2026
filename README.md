@@ -71,6 +71,7 @@ curl -X POST $F/connector_link/issue  -d '{"owner_address": "0x…", "label": "m
 curl -X POST $F/connector_link/rotate -d '{"token": "ctb_…"}'                              # → new token, old one revoked
 curl -X POST $F/connector_link/revoke -d '{"token": "ctb_…"}'
 curl -X POST $F/connector_link/verify -d '{"token": "ctb_…"}'                              # used by the connector
+curl -X POST $F/expert_application -d '{"name": "…", "email": "…", "field": "Residential property, Sofia"}'  # → {received: true}
 
 # Order for agent + question (agent uuid or slug; capability defaults to price-check)
 curl -X POST $F/create_order -H 'x-connector-token: ctb_…' \
@@ -90,7 +91,7 @@ To deploy (needs `supabase login` and access to the org):
 ```sh
 supabase link --project-ref ssqxkwakrrpvqekcglqr   # once per clone; uses SUPABASE_DB_PASSWORD
 supabase db push --include-seed                    # migrations + seed.sql
-supabase functions deploy --use-api                # the 4 Edge Functions
+supabase functions deploy --use-api                # the 5 Edge Functions
 node --env-file=.env.hosted knowledge/dist/seed.js                                          # knowledge units
 (cd apps/connector && npx tsx --env-file=../../.env.hosted src/scripts/configure-demo.ts)   # agent signing/payout addresses
 ```
