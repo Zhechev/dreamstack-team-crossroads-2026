@@ -80,7 +80,7 @@ export function createApp(config: Config, deps: Partial<AppDeps> = {}) {
   app.get("/health", (c) => c.json({ ok: true }));
   app.route("/mcp", createMcpRoutes({ verifyLink, searchExperts, evaluateAgent, problems }));
   app.route("/agents", createAgentRoutes(agentDeps));
-  app.route("/problems", createProblemRoutes({ problems, allowedOrigins: config.allowedOrigins }));
+  app.route("/problems", createProblemRoutes({ problems, verifyLink, allowedOrigins: config.allowedOrigins }));
   return app;
 }
 

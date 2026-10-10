@@ -86,12 +86,18 @@ export function createProblems(deps: ProblemsDeps) {
   }
 
   return {
-    async open(linkId: string, cap: string): Promise<ProblemState> {
+    /**
+     * The buyer's budget (ADR-011, top up once): one open budget per link, reused for every question.
+     * Returns the open one if there is one; opens a new one only when there is none.
+     */
+    async open(linkId: string, cap: string): Promise<ProblemState & { existing: boolean }> {
       if (!/^\d+(\.\d{1,6})?$/.test(cap) || units(cap) <= 0n) throw new FundingError('cap must be a USDC amount like "2.00"');
       if (units(cap) > units(MAX_CAP)) throw new FundingError(`cap can be at most ${MAX_CAP} USDC`);
+      const current = await deps.store.latestOpen(linkId);
+      if (current) return { ...stateOf(await refresh(current)), existing: true };
       const wallet = newProblemWallet(deps.walletSecret);
       const p = await deps.store.create({ linkId, walletAddress: wallet.address, keyEnc: wallet.keyEnc, cap: text(units(cap)) });
-      return stateOf(p);
+      return { ...stateOf(p), existing: false };
     },
 
     /** Public problem state by id (the approval page, the receipt). */
@@ -113,7 +119,7 @@ export function createProblems(deps: ProblemsDeps) {
       if (!found || found.linkId !== linkId) throw new AskError("No open budget. Call approve_budget first.");
       const p = await refresh(found);
       if (p.status === "closed") throw new AskError("This budget is closed. Open a new one with approve_budget.");
-      if (p.status !== "funded") throw new AskError(`The budget isn't approved yet. Send the buyer the approval link: ${approvalUrl(p.id)}`);
+      if (p.status !== "funded") throw new AskError(`The budget isn't topped up yet. Send the buyer the top-up link: ${approvalUrl(p.id)}`);
 
       const remaining = units(stateOf(p).remaining);
       const result = await deps.payer.priceCheck({
