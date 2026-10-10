@@ -81,6 +81,22 @@ curl -X POST $F/create_order -H 'x-connector-token: ctb_…' \
 curl "$F/get_order?id=<order_id>"
 ```
 
+## Supabase (hosted)
+
+The hosted project is **citable** (ref `ssqxkwakrrpvqekcglqr`, Frankfurt), in the Supabase org *Citable*. Its URL is `https://ssqxkwakrrpvqekcglqr.supabase.co`. The anon key is public and safe for the Lovable app. The service role key and DB password stay in a gitignored `.env.hosted`; ask a teammate for them.
+
+To deploy (needs `supabase login` and access to the org):
+
+```sh
+supabase link --project-ref ssqxkwakrrpvqekcglqr   # once per clone; uses SUPABASE_DB_PASSWORD
+supabase db push --include-seed                    # migrations + seed.sql
+supabase functions deploy --use-api                # the 4 Edge Functions
+node --env-file=.env.hosted knowledge/dist/seed.js                                          # knowledge units
+(cd apps/connector && npx tsx --env-file=../../.env.hosted src/scripts/configure-demo.ts)   # agent signing/payout addresses
+```
+
+Running the seed and `configure-demo` again is safe. `db push --include-seed` is meant for an empty project only: the seed inserts fixed ids and fails if the rows already exist.
+
 ## Connector service (local)
 
 ```sh
