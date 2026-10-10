@@ -3,3 +3,8 @@
 /.obsidian/graph.json
 .trash/
 .DS_Store
+
+# Node
+node_modules/
+dist/
+.env

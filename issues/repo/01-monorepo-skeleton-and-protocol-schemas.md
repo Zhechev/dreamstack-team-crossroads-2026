@@ -7,10 +7,10 @@
 
 **Blocked by:** None (can start immediately)
 
-**Status:** ready-for-agent
+**Status:** done
 
-- [ ] pnpm workspace next to `docs/`, MIT licence, `.env.example` listing every key the project needs (no values), README stub with run steps
-- [ ] Protocol package exports zod schemas for Evaluation, Manifest, SignedOutcome, Receipt, matching the Data Model note field for field
-- [ ] Tests: a valid example of each message parses; a citation missing `as_of` or `unit_id` is rejected
-- [ ] `pnpm install && pnpm build && pnpm test` is green from a clean clone
-- [ ] No `apps/web` content: that folder is reserved for the Lovable import (ticket 20)
+- [x] pnpm workspace next to `docs/`, MIT licence, `.env.example` listing every key the project needs (no values), README stub with run steps
+- [x] Protocol package exports zod schemas for Evaluation, Manifest, SignedOutcome, Receipt, matching the Data Model note field for field
+- [x] Tests: a valid example of each message parses; a citation missing `as_of` or `unit_id` is rejected
+- [x] `pnpm install && pnpm build && pnpm test` is green from a clean clone
+- [x] No `apps/web` content: that folder is reserved for the Lovable import (ticket 20)
