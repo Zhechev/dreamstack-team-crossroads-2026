@@ -1,0 +1,20 @@
+{
+  "agent": "varna-coast-price-check",
+  "area": "Varna",
+  "deal_source": "Maria Dimitrova: closed deals (synthetic)",
+  "passages": [
+    {
+      "key": "base-holiday-fees",
+      "layer": "base",
+      "source": "Citable market guidance (demo, illustrative)",
+      "source_url": null,
+      "as_of": "2026-09-01",
+      "text": "Flats in holiday complexes carry yearly maintenance fees. Compare them separately from year-round flats in residential buildings."
+    }
+  ],
+  "deals": [
+    { "key": "deal-v01", "bedrooms": 2, "area_m2": 68, "floor": 4, "floors": 6, "built": 2012, "parking": false, "price_eur": 121000, "sold_on": "2026-09-18", "street": "Chaika" },
+    { "key": "deal-v02", "bedrooms": 1, "area_m2": 49, "floor": 2, "floors": 5, "built": 2008, "parking": false, "price_eur": 78000, "sold_on": "2026-08-29", "street": "Asparuhovo" },
+    { "key": "deal-v03", "bedrooms": 2, "area_m2": 74, "floor": 5, "floors": 7, "built": 2019, "parking": true, "price_eur": 149000, "sold_on": "2026-08-11", "street": "Briz (sea view)" }
+  ]
+}

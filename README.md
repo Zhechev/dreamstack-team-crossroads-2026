@@ -15,6 +15,7 @@ Team: Kris Georgiev, Mitko Zhechev.
 | `apps/connector` | One hosted service: `/mcp` buyer connector + `/agents/:id/...` expert agent routes + `/problems/:id` budget state. `pnpm --filter @citable/connector dev` |
 | `apps/web` | Lovable app — reserved, imported in ticket 20; don't edit by hand |
 | `supabase/` | Migrations, seed, pgTAP tests; Edge Functions *(coming)* |
+| `knowledge/` | Demo sources, synthetic deal data, seeder and hybrid search (`@citable/knowledge`) |
 | `terms/` | Terms text per version + `hash.mjs` (sha256 stored in `terms_versions`) |
 | `spikes/` | Throwaway proofs (e.g. x402 problem-wallet payment) |
 
@@ -45,6 +46,15 @@ The seed has three demo experts, all fictional and labelled "Demo expert, fictio
 **Schema ownership:** Claude Code owns the schema in `supabase/migrations`. Lovable must never create or alter tables; it only reads through the anon key and calls Edge Functions.
 
 New tables get no anon or authenticated grants by default. Grant read access explicitly in the migration that needs it.
+
+### Knowledge units
+
+```sh
+pnpm --filter @citable/knowledge seed      # upsert units from knowledge/data/*.json (re-runnable)
+pnpm --filter @citable/knowledge test:db   # search tests against the running Supabase
+```
+
+Run the seeder again after every `supabase db reset`. Deal records are synthetic and labelled so; base passages are illustrative summaries, not real statistics. With `OPENAI_API_KEY` set, the seeder embeds new or changed units with `text-embedding-3-small` and search adds vector ranking. Without it, search uses full-text + trigram only. `search_units(agent, question)` can only be called with the service role.
 
 ## Licence
 
