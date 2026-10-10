@@ -97,6 +97,10 @@ node --env-file=.env.hosted knowledge/dist/seed.js                              
 
 Running the seed and `configure-demo` again is safe. `db push --include-seed` is meant for an empty project only: the seed inserts fixed ids and fails if the rows already exist.
 
+## Connector service (hosted)
+
+Live at **https://citable-connector.onrender.com** (Render free plan, Frankfurt), against the hosted Supabase project. Render builds `main` on every push: `corepack enable && pnpm install --frozen-lockfile && pnpm --filter @citable/connector... build`, then `node apps/connector/dist/index.js`. Secrets are Render environment variables (same keys as `.env.hosted`). The free plan sleeps after 15 idle minutes (about a minute to wake), so an uptime monitor pings `/health` every 5 minutes. After changing the hosted agents' keys, run `configure-demo` with `.env.hosted`.
+
 ## Connector service (local)
 
 ```sh
