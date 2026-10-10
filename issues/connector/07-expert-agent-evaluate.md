@@ -7,9 +7,11 @@
 
 **Blocked by:** 01 (Monorepo skeleton + protocol schemas), 04 (Supabase schema, RLS + seeded demo experts)
 
-**Status:** ready-for-agent
+**Status:** done locally (not deployed: no Node host account yet)
 
 - [ ] Service skeleton deployed to the chosen Node host with one `.env`; per-agent config (sources, rules, prices, version, payout address) loaded from Supabase
-- [ ] Evaluate route for an agent returns a valid Evaluation (protocol schema) with an expiry
-- [ ] Out-of-scope question (e.g. a car price) returns can_answer = false, no price
-- [ ] No payment required on this route
+- [x] Evaluate route for an agent returns a valid Evaluation (protocol schema) with an expiry
+- [x] Out-of-scope question (e.g. a car price) returns can_answer = false, no price
+- [x] No payment required on this route
+
+**Notes:** `apps/connector` runs locally with `pnpm --filter @citable/connector dev`. The route lives in `routes/agents.ts` of the service skeleton (#6), agent config in `agents/load.ts`, and the Supabase keys come through `config.ts`. It is **not deployed yet**: that needs a Fly.io or Render account and the hosted Supabase keys. The protocol's `Evaluation.price` is required, so out of scope returns `"0.00"`; making `price` optional when `can_answer` is false would need a schema change in `@citable/protocol` (Kris). All agents share the deliverable "5 comparable sales", but Mladost and Varna have fewer than 5 deals in the data.

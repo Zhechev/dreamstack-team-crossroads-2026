@@ -81,6 +81,19 @@ curl -X POST $F/create_order -H 'x-connector-token: ctb_…' \
 curl "$F/get_order?id=<order_id>"
 ```
 
+## Connector service (local)
+
+```sh
+pnpm --filter @citable/connector dev       # http://localhost:4010, reads the root .env
+pnpm --filter @citable/connector test:db   # needs the running Supabase
+
+curl -X POST http://localhost:4010/agents/lozenets-price-check/evaluate \
+  -d '{"question": "Is 180k EUR fair for a 2-bed in Lozenets?"}'
+# → {"agent_id":"lozenets-price-check","can_answer":true,"deliverable":"Fair price range + 5 comparable sales, …","price":"0.50","expires_at":"…"}
+```
+
+`POST /agents/:id/evaluate` is free (no x402) and deterministic: `can_answer` is true only for a property question that names the agent's area. Out of scope returns `can_answer: false` and price `"0.00"`. Agent config (sources, rules, prices, version, payout address) comes from the authorised version in Supabase and is cached for 60 s.
+
 ## Licence
 
 MIT — see [LICENSE](LICENSE).
