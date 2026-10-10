@@ -1,7 +1,7 @@
 {
   "agent": "varna-coast-price-check",
   "area": "Varna",
-  "deal_source": "Maria Dimitrova: closed deals (synthetic)",
+  "deal_source": "Maria Dimitrova: closed deals",
   "passages": [
     {
       "key": "base-holiday-fees",

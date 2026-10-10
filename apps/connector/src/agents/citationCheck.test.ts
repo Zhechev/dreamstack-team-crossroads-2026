@@ -23,9 +23,9 @@ const agent: AgentConfig = {
 };
 
 const units: CitableUnit[] = [
-  { id: "u1", agent_id: "agent-lozenets", as_of: "2026-09-28", text: "Synthetic deal record: 2-bed flat, 74 m². Sold for €172,000 (€2,324/m²) on 2026-09-28." },
-  { id: "u2", agent_id: "agent-lozenets", as_of: "2026-09-19", text: "Synthetic deal record: 2-bed flat, 81 m². Sold for €194,000 (€2,395/m²) on 2026-09-19." },
-  { id: "foreign", agent_id: "agent-mladost", as_of: "2026-09-25", text: "Synthetic deal record: 2-bed flat, 70 m². Sold for €142,000 (€2,029/m²) on 2026-09-25." },
+  { id: "u1", agent_id: "agent-lozenets", as_of: "2026-09-28", text: "Closed deal: 2-bed flat, 74 m². Sold for €172,000 (€2,324/m²) on 2026-09-28." },
+  { id: "u2", agent_id: "agent-lozenets", as_of: "2026-09-19", text: "Closed deal: 2-bed flat, 81 m². Sold for €194,000 (€2,395/m²) on 2026-09-19." },
+  { id: "foreign", agent_id: "agent-mladost", as_of: "2026-09-25", text: "Closed deal: 2-bed flat, 70 m². Sold for €142,000 (€2,029/m²) on 2026-09-25." },
 ];
 const lookup = async (ids: string[]) => units.filter((u) => ids.includes(u.id));
 

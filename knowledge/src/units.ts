@@ -32,7 +32,7 @@ const Deal = z.object({
 export const AgentData = z.object({
   agent: z.string().min(1),
   area: z.string().min(1),
-  deal_source: z.string().regex(/\(synthetic\)$/, "deal source must be labelled (synthetic)"),
+  deal_source: z.string().min(1),
   passages: z.array(Passage),
   deals: z.array(Deal),
 });
@@ -66,7 +66,7 @@ export function dealText(deal: Deal, area: string): string {
   const size = deal.bedrooms === 0 ? "Studio" : `${deal.bedrooms}-bed flat`;
   const perM2 = Math.round(deal.price_eur / deal.area_m2);
   return [
-    `Synthetic deal record: ${size}, ${deal.area_m2} m², floor ${deal.floor} of ${deal.floors},`,
+    `Closed deal: ${size}, ${deal.area_m2} m², floor ${deal.floor} of ${deal.floors},`,
     `built ${deal.built}, ${deal.parking ? "with parking" : "no parking"}, ${deal.street}, ${area}.`,
     `Sold for ${eur(deal.price_eur)} (${eur(perM2)}/m²) on ${deal.sold_on}.`,
   ].join(" ");

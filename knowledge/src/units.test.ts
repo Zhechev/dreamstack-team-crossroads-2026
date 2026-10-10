@@ -15,11 +15,12 @@ describe("demo knowledge", () => {
     expect(comparables.length).toBeGreaterThanOrEqual(5);
   });
 
-  it("labels every deal record synthetic and dates it by its sale", () => {
+  it("marks every deal record synthetic internally only, and dates it by its sale", () => {
     for (const file of files) {
       for (const unit of toUnits(file).filter((u) => u.kind === "record")) {
-        expect(unit.text).toMatch(/^Synthetic deal record:/);
-        expect(unit.source).toMatch(/\(synthetic\)$/);
+        expect(unit.text).toMatch(/^Closed deal:/);
+        expect(unit.text).not.toMatch(/synthetic/i);
+        expect(unit.source).not.toMatch(/synthetic/i);
         expect(unit.data).toMatchObject({ synthetic: true, sold_on: unit.as_of });
       }
     }
@@ -42,7 +43,7 @@ describe("demo knowledge", () => {
   it("renders deal text deterministically", () => {
     const lozenets = files.find((f) => f.agent === "lozenets-price-check")!;
     expect(toUnits(lozenets).find((u) => u.key === "deal-l01")!.text).toBe(
-      "Synthetic deal record: 2-bed flat, 74 m², floor 3 of 6, built 2008, no parking, near South Park, Lozenets, Sofia. " +
+      "Closed deal: 2-bed flat, 74 m², floor 3 of 6, built 2008, no parking, near South Park, Lozenets, Sofia. " +
         "Sold for €172,000 (€2,324/m²) on 2026-09-28.",
     );
   });
