@@ -77,12 +77,12 @@ describe("MCP connector", () => {
       clientInfo: { name: "test", version: "0" },
     });
     expect(body.result.serverInfo.name).toBe("citable");
-    expect(body.result.instructions).toMatch(/approve a budget/);
+    expect(body.result.instructions).toMatch(/approve_budget/);
   });
 
-  it("lists find_expert and evaluate", async () => {
+  it("lists the buyer tools", async () => {
     const { body } = await rpc("tools/list");
-    expect(body.result.tools.map((t: { name: string }) => t.name).sort()).toEqual(["evaluate", "find_expert"]);
+    expect(body.result.tools.map((t: { name: string }) => t.name).sort()).toEqual(["approve_budget", "budget_status", "evaluate", "find_expert"]);
   });
 
   it("find_expert returns the top agents from search", async () => {

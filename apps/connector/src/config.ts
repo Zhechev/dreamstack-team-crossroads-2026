@@ -1,9 +1,23 @@
 // Settings from the root .env. Add keys here as tickets need them, never read process.env elsewhere.
+type Hex = `0x${string}`;
+
 export type Config = {
   port: number;
   /** Supabase project; the service role reads agent config and private units. */
   supabaseUrl?: string;
   supabaseServiceRoleKey?: string;
+  /** Base Sepolia (ticket 11). */
+  rpcUrl: string;
+  chainId: number;
+  usdcAddress: Hex;
+  /** Pays gas for gasless budget funding and seeds problem wallets. */
+  gasFunderKey?: Hex;
+  /** 32-byte hex key that encrypts problem-wallet keys at rest. */
+  problemWalletSecret?: string;
+  /** Lovable app: approval links point here. */
+  webAppUrl: string;
+  /** Extra CORS origins beyond Lovable domains and localhost. */
+  allowedOrigins: string[];
 };
 
 export function loadConfig(env: NodeJS.ProcessEnv = process.env): Config {
@@ -11,5 +25,12 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): Config {
     port: Number(env.PORT ?? 4010),
     supabaseUrl: env.SUPABASE_URL || undefined,
     supabaseServiceRoleKey: env.SUPABASE_SERVICE_ROLE_KEY || undefined,
+    rpcUrl: env.BASE_SEPOLIA_RPC_URL || "https://sepolia.base.org",
+    chainId: 84532,
+    usdcAddress: (env.USDC_ADDRESS || "0x036CbD53842c5426634e7929541eC2318f3dCF7e") as Hex,
+    gasFunderKey: (env.GAS_FUNDER_PRIVATE_KEY || undefined) as Hex | undefined,
+    problemWalletSecret: env.PROBLEM_WALLET_SECRET || undefined,
+    webAppUrl: env.WEB_APP_URL || "http://localhost:5173",
+    allowedOrigins: (env.ALLOWED_ORIGINS ?? "").split(",").map((s) => s.trim()).filter(Boolean),
   };
 }
