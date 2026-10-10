@@ -6,6 +6,7 @@ updated: 2026-10-10
 
 > One line per change to a decision or plan, newest first.
 
+- 2026-10-10 — **find_expert shows inline cards in Claude (ticket 23).** The connector serves an MCP Apps view (`ui://citable/find-expert.html`) so the buyer sees the top expert agents as cards in the chat and taps "Check with this expert" without leaving it. Top-up stays a link: MetaMask cannot sign inside the sandboxed iframe.
 - 2026-10-10 — **Site audit fixes (ticket 22) and expert applications.** "Funds never pass through us" is only true in production (ADR-011): landing, Business Model and Pitch Deck now say so, with a testnet line. Expert sign-up goes to a form backed by the new `expert_application` Edge Function and private `expert_applications` table (reviewed by hand in Supabase Studio). Ticket 20 now waits for ticket 22.
 - 2026-10-10 — **Connector hosted on Render (free)** at https://citable-connector.onrender.com, Frankfurt, against the hosted Supabase project; auto-deploys `main`; uptime ping keeps it awake. Hosted agents re-pointed at the service's signing key and payout wallet (`configure-demo`). Full paid flow verified on hosted (top-up, ask, close).
 - 2026-10-10 — **Positioning: global expert marketplace, not a Sofia/Varna home-buying tool** (Kris, for investors). Hero drops "your next home / for buyers in Sofia and Varna"; real estate becomes the first live vertical. New [[Landing Page]] with money-flow and why-it-scales sections plus the Lovable prompt; Product and Pitch Deck updated.
