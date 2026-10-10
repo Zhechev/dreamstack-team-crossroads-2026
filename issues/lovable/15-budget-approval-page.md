@@ -9,14 +9,14 @@
 
 **Blocked by:** 11 (approve_budget + budget_status), 13 (Lovable project setup + landing page)
 
-**Status:** in progress — prompt sent to Lovable 2026-10-10
+**Status:** done (follow-up prompt pending: pick MetaMask via EIP-6963, show errors/address, top-up wording)
 
-- [ ] Page reads the problem id from the URL and loads wallet address, cap and status from the connector problem-state endpoint
-- [ ] Connect MetaMask; prompt to switch to Base Sepolia if on another network
-- [ ] One button asks MetaMask to sign the EIP-3009 typed data from the problem-state endpoint (`eth_signTypedData_v4`), posts the signature to `{CONNECTOR_URL}/problems/:id/fund`, and shows the returned tx hash with a BaseScan link
-- [ ] After funding: "You can go back to Claude", plus a live list (polling) of payments with amounts and tx hashes
-- [ ] Copy says the agent can never spend more than the cap and the rest comes back
-- [ ] Works for a buyer with USDC and **zero** ETH
+- [x] Page reads the problem id from the URL and loads wallet address, cap and status from the connector problem-state endpoint
+- [x] Connect MetaMask; prompt to switch to Base Sepolia if on another network
+- [x] One button asks MetaMask to sign the EIP-3009 typed data from the problem-state endpoint (`eth_signTypedData_v4`), posts the signature to `{CONNECTOR_URL}/problems/:id/fund`, and shows the returned tx hash with a BaseScan link
+- [x] After funding: "You can go back to Claude", plus a live list (polling) of payments with amounts and tx hashes
+- [x] Copy says the agent can never spend more than the cap and the rest comes back
+- [x] Works for a buyer with USDC and **zero** ETH
 
 **Starter prompt** (corrected 2026-10-10 to the connector's real response; `CONNECTOR_URL` lives in Lovable's settings file — the current tunnel until the connector is hosted):
 > Add a page at /approve/:problemId (the link Claude gives the buyer).
@@ -37,3 +37,5 @@
 **Test:** open `/approve/<problem_id>` for a budget from `approve_budget`, connect the buyer's MetaMask, sign (a signature request, no gas), see the funding tx; `budget_status` in Claude then shows funded.
 
 **Spike findings (ticket 03, GO):** a plain USDC transfer costs the buyer gas, so the buyer needs Base Sepolia ETH as well as USDC — this blocked the first spike run (the faucet had sent ETH to Ethereum Sepolia). **Decided (Q-14, ADR-011):** gasless — the buyer signs an EIP-3009 `transferWithAuthorization` and the connector submits it.
+
+**Verified (2026-10-10):** real MetaMask signature on the Lovable page funded the budget gaslessly ([0x8e02b4…](https://sepolia.basescan.org/tx/0x8e02b4015ccfbcf272ace2f7e94b02c72c0f661f4c5d01f25c8e2de957bbba07)). **Gotcha:** with several wallet extensions installed (e.g. Phantom, Coinbase), `window.ethereum` may belong to another wallet and Connect does nothing (console: `NotHandledError … cs-to-bg-event`). Fix in the follow-up prompt: wagmi `injected({ target: "metaMask" })` with EIP-6963 discovery; workaround: disable the other wallet extensions.

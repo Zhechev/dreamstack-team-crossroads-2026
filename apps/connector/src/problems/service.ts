@@ -184,6 +184,7 @@ export function createProblems(deps: ProblemsDeps) {
         refund_tx: refundTx,
         receipts,
         fee_note: FEE_NOTE,
+        next: "The budget is closed. For another paid answer the buyer tops up again: call approve_budget and send the top-up link (one signature, no gas).",
       };
     },
 
