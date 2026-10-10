@@ -29,7 +29,6 @@ const match: ExpertMatch = {
   expert: "Elena Petrova",
   area: "Sofia / Lozenets",
   badge: "Expert Verified (v1)",
-  demo_label: "Demo expert, fictional",
   rating: 4.8,
   rating_count: 12,
   capabilities: [{ tier: 1, name: "Price check", price: "0.50", price_is_minimum: false, available_now: true }],

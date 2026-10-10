@@ -40,7 +40,7 @@ updated: 2026-10-10
 - Hash recorded on every order; experts sign at onboarding, buyers at first use.
 
 ## Identity
-- Experts are verified in production; the demo expert is fictional and labelled.
+- Experts are verified in production; the demo experts are fictional and, for the MVP, not labelled in the product (2026-10-10).
 - Buyers are pseudonymous: a wallet address and nothing else.
 
 ## Remaining risks

@@ -31,7 +31,6 @@ Wording follows ADR-014 (headline, seller line, claims) and Brand (colours, type
 > - Supabase: use the existing tables and views only (`marketplace_agents`, `experts`, `agents`, `capabilities`, `ratings`, `terms_versions`). Never create, alter or drop tables, views, functions, policies or migrations. Never use the service role key. Read with the anon key; anything that writes goes through the connector service or Edge Functions.
 > - No secrets in the frontend.
 > - Wording: say "price check", never "appraisal" or "valuation". Never say "non-custodial", "works in ChatGPT", "refund guaranteed" or "legal advice". Prices are in USDC, written like "0.50 USDC".
-> - Demo experts are fictional: always show their demo label.
 > - Style: mobile-first iOS feel, colours and type exactly as in the first prompt. One accent colour (#B4532A) used sparingly.
 
 ### Prompt 1 — brand + landing page

@@ -7,8 +7,6 @@ export interface ExpertMatch {
   expert: string;
   area: string;
   badge: string;
-  /** Labels fictional demo experts; always shown with the agent. */
-  demo_label: string | null;
   rating: number | null;
   rating_count: number;
   capabilities: { tier: number; name: string; price: string; price_is_minimum: boolean; available_now: boolean }[];
@@ -35,7 +33,6 @@ export function toExpertMatch(row: Row): ExpertMatch {
     expert: row.expert_name,
     area: row.area,
     badge: row.badge,
-    demo_label: row.demo_label,
     rating: row.rating === null ? null : Number(row.rating),
     rating_count: Number(row.rating_count),
     capabilities: row.capabilities.map((c) => ({
