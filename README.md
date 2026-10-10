@@ -12,7 +12,7 @@ Team: Kris Georgiev, Mitko Zhechev.
 | Path | What |
 |---|---|
 | `packages/protocol` | Shared zod schemas: Evaluation, Manifest, SignedOutcome, Review, Receipt |
-| `apps/connector` | One hosted service: `/mcp` buyer connector + `/agents/:id/...` expert agent routes *(coming)* |
+| `apps/connector` | One hosted service: `/mcp` buyer connector + `/agents/:id/...` expert agent routes + `/problems/:id` budget state. `pnpm --filter @citable/connector dev` |
 | `apps/web` | Lovable app — reserved, imported in ticket 20; don't edit by hand |
 | `supabase/` | Migrations + Edge Functions *(coming)* |
 | `spikes/` | Throwaway proofs (e.g. x402 problem-wallet payment) |
