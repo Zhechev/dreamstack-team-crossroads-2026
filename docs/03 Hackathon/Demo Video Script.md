@@ -4,7 +4,7 @@ updated: 2026-10-10
 ---
 # Demo Video Script — 2:00
 
-> The MP4 the judges watch. Story: [[Demo Story]]. Record in a phone-sized viewport. Headline pending [[Open Questions]] Q-4.
+> The MP4 the judges watch. Story: [[Demo Story]]. Record in a phone-sized viewport. Headline: *"Ask your AI. Get an answer an expert stands behind."* ([[ADR-014 Promises and claims]]).
 
 | Time | Screen | Voice-over |
 |---|---|---|

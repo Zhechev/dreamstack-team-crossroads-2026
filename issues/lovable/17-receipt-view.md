@@ -12,7 +12,8 @@
 - [ ] Receipt page by problem id lists budget, every payment, remainder refund, each with a BaseScan link
 - [ ] Each order shows capability, amount, Terms hash and a green "Citations verified" mark when the check passed
 - [ ] Citation pills like `[Deal #12 · Sep 2026]` for the answer's sources
+- [ ] Each order shows the split: "0.35 to expert · 0.15 Citable fee — waived during the hackathon" (ADR-016; fee not collected in the MVP)
 - [ ] Reachable from the approval page after the problem is closed
 
 **Starter prompt:**
-> Add a Receipt page at /receipt/:problemId styled as a paper slip. Fetch the problem and its orders from {CONNECTOR_URL}/problems/:problemId. Show: budget approved, each payment (capability name, amount in USDC, tx hash in JetBrains Mono linking to BaseScan, Terms hash), a green "Citations verified" check when citationsVerified is true, citation pills like "[Deal #12 · Sep 2026]", and the refunded remainder. Link to it from the approval page once the problem is closed. Do not create or change any Supabase tables.
+> Add a Receipt page at /receipt/:problemId styled as a paper slip. Fetch the problem and its orders from {CONNECTOR_URL}/problems/:problemId. Show: budget approved, each payment (capability name, amount in USDC, tx hash in JetBrains Mono linking to BaseScan, Terms hash), a green "Citations verified" check when citationsVerified is true, citation pills like "[Deal #12 · Sep 2026]", a small fee line per order ("{expertShare} to expert · {fee} Citable fee — waived during the hackathon", fee struck through), and the refunded remainder. Link to it from the approval page once the problem is closed. Do not create or change any Supabase tables.

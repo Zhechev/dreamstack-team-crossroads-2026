@@ -32,7 +32,12 @@ Production: same UX with a spend permission scoped to the problem → [[ADR-011 
 | MVP | **live** | shown | shown |
 
 ## Escrow
-Not in the MVP. DreamEscrow is deferred (ADR-013).
+None. [[ADR-013 Escrow for drafts|ADR-013]] is superseded:
+- **Tier 1** settles only after the citation check (4xx → never settled).
+- **Tier 2 (roadmap)** settles **on delivery**: the buyer signs a gasless EIP-3009 authorisation (~24 h validity); the connector submits it only when the expert's review arrives. A slower review needs a fresh signature.
+
+## Fee
+Two transfers per order: expert's share over x402 + Citable's fee as a separate transfer from the same budget (30% tier 1, 10% tiers 2–3 → [[ADR-016 Take rate on settled orders|ADR-016]]). **MVP:** shown on the receipt as waived, not collected.
 
 ## Wallets
 - **Buyer:** their own MetaMask on Base Sepolia, funded from the Circle faucet (20 USDC per address per 2h) — **USDC only, no ETH needed**. One signature per problem.

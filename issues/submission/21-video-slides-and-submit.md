@@ -9,7 +9,7 @@
 
 **Status:** ready-for-human
 
-- [ ] Q-4 headline and Q-9 take rate decided before slides; Q-13 facts checked
+- [x] Q-4 headline and Q-9 take rate decided before slides; Q-13 facts checked (ADR-014, ADR-016, Fact Check 2026-10-10)
 - [ ] Video recorded by Sun 12:30, at most 2 minutes, shows the live Claude flow plus tiers 2–3 and the expert console as shown-not-built
 - [ ] 8-slide PDF exported; pitch rehearsed
 - [ ] Repo public, MIT, README complete; submitted before 14:00

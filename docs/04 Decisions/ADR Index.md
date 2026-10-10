@@ -20,7 +20,7 @@ updated: 2026-10-10
 | [[ADR-010 Buyer connector in Claude\|ADR-010]] | Buyer connector in Claude |
 | [[ADR-011 Buyer wallet and spend permission\|ADR-011]] | Buyer wallet and spend permission |
 | [[ADR-012 Identity placeholders\|ADR-012]] | Identity placeholders |
-| [[ADR-013 Escrow for drafts\|ADR-013]] | Escrow for drafts — *deferred (not in MVP)* |
+| [[ADR-013 Escrow for drafts\|ADR-013]] | Escrow for drafts — *superseded: no escrow; tier 2 settles on delivery* |
 | [[ADR-014 Promises and claims\|ADR-014]] | Promises and claims |
 | [[ADR-015 Demo prices\|ADR-015]] | Demo prices |
 | [[ADR-016 Take rate on settled orders\|ADR-016]] | Take rate on settled orders |

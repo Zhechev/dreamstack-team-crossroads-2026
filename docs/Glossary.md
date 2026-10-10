@@ -28,8 +28,8 @@ updated: 2026-10-10
 - **Rating** — score signed by the paying key over the order's tx hash.
 - **Reputation / Score** — ratings and uptime per capability.
 - **Signed outcome** — outcome JSON signed by the agent's key, bound to the order.
-- **Dispute** — buyer's claim that an outcome breached Terms (e.g. a citation doesn't match).
-- **Judge** — the function that decides disputes by checking citations; can trigger a refund.
+- **Dispute** — buyer's claim that an outcome breached Terms; in the MVP handled before settlement by the judge, afterwards only via ratings.
+- **Judge** — the deterministic citation check that runs before a payment settles; a failure means the payment is never settled.
 - **Placeholder** — `{{full_name}}`-style slot in an outcome; the buyer's assistant fills it in the final text.
 - **Connector link** — private per-buyer URL `/mcp/<token>` that adds Citable to Claude.
 - **Registry** — the marketplace's list of sellers, agents, capabilities, prices, tags.
@@ -43,7 +43,7 @@ updated: 2026-10-10
 - **Facilitator** — service that verifies and settles x402 payments (we use x402.org's testnet facilitator).
 - **MCP** — Model Context Protocol; how assistants call tools. **Remote MCP / custom connector** — an MCP server reached over HTTPS, added in Claude → Settings → Connectors.
 - **USDC** — USD stablecoin. **Base** — Coinbase's Ethereum L2; **Base Sepolia** — its testnet.
-- **DreamEscrow** — our Solidity escrow contract.
+- **DreamEscrow** — the escrow contract we planned; superseded, not built (ADR-013).
 - **ERC-7715** — standard for wallets granting scoped permissions to apps/agents.
 - **Faucet** — free testnet tokens (Circle: 20 USDC per address per 2h).
 - **Lovable** — AI app builder (React + TS + Supabase), sponsor. **Claude Code** — coding agent, sponsor.
