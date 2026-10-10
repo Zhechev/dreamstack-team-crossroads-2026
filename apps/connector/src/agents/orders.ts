@@ -14,6 +14,8 @@ export interface OrderStore {
   start(input: { agent: AgentConfig; capability: string; question: string; orderId?: string }): Promise<StartedOrder>;
   /** Stores the signed answer; `checked` says whether the citation check passed. */
   answered(orderId: string, outcome: SignedOutcome, checked: boolean | null): Promise<void>;
+  /** The citation check failed: never settled, and a negative reputation event for the agent (ADR-009). */
+  failedCheck(input: { orderId: string; agent: AgentConfig; capability: string; outcome: SignedOutcome; failures: string[] }): Promise<void>;
   /** After the x402 facilitator settled the payment. */
   settled(orderId: string, txHash: string, payer: string | undefined): Promise<void>;
 }
@@ -103,6 +105,37 @@ export function supabaseOrderStore(db: SupabaseClient): OrderStore {
           })
           .eq("id", orderId),
         "store answer",
+      );
+    },
+
+    async failedCheck({ orderId, agent, capability, outcome, failures }) {
+      ok(
+        await db
+          .from("orders")
+          .update({
+            status: "failed_check",
+            answer: outcome.text,
+            citations: outcome.citations,
+            signature: outcome.signature,
+            citations_verified: false,
+          })
+          .eq("id", orderId),
+        "mark failed check",
+      );
+      const cap = row(
+        await db.from("capabilities").select("id").eq("agent_id", agent.id).eq("slug", capability).single(),
+        "read capability",
+      );
+      ok(
+        await db.from("reputation_events").insert({
+          agent_id: agent.id,
+          capability_id: cap.id,
+          order_id: orderId,
+          kind: "citation_check_failed",
+          delta: -1,
+          details: { failures },
+        }),
+        "record reputation event",
       );
     },
 

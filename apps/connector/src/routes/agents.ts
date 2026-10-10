@@ -2,6 +2,7 @@
 // Pattern for the paid route: spikes/03-x402-problem-wallet/server.ts. A failed citation check returns 422 → never settled.
 import { Hono, type MiddlewareHandler } from "hono";
 import { NoAnswerError } from "../agents/answer.js";
+import { checkCitations } from "../agents/citationCheck.js";
 import type { AgentDeps } from "../agents/deps.js";
 import { evaluate } from "../agents/evaluate.js";
 import type { AgentConfig } from "../agents/load.js";
@@ -60,7 +61,15 @@ export function createAgentRoutes(deps: AgentDeps) {
       try {
         const order = await deps.orders.start({ agent, capability: "price-check", question, orderId: order_id });
         const outcome = await runPriceCheck(deps, { agent, question, orderId: order.id });
-        await deps.orders.answered(order.id, outcome, null);
+
+        // Ticket 09: check every citation before the middleware settles. 422 → never settled.
+        const check = await checkCitations(deps.lookupUnits, { agent, orderId: order.id, outcome });
+        if (!check.ok) {
+          await deps.orders.failedCheck({ orderId: order.id, agent, capability: "price-check", outcome, failures: check.failures });
+          return c.json({ error: "citation_check_failed", order_id: order.id, failures: check.failures }, 422);
+        }
+
+        await deps.orders.answered(order.id, outcome, true);
         c.set("orderId", order.id);
         return c.json(outcome);
       } catch (e) {

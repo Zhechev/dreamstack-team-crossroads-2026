@@ -17,6 +17,7 @@ import { keySigner, verifyOutcomeSignature } from "./outcome.js";
 import { NETWORK } from "./payments.js";
 import { freshUnits } from "./priceCheck.js";
 
+const signer = keySigner(generatePrivateKey());
 const NOW = new Date("2026-10-10T12:00:00Z");
 const TX = `0x${"ab".repeat(32)}`;
 const QUESTION = "Is €180k fair for a 2-bed in Lozenets?";
@@ -31,7 +32,7 @@ const lozenets: AgentConfig = {
   sources: [],
   rules: ["Use only deals closed in the last 90 days."],
   payout_address: "0x00000000000000000000000000000000000de001",
-  signing_address: null,
+  signing_address: signer.address,
   capabilities: [
     { slug: "price-check", tier: 1, name: "Price check", deliverable: "Fair price range + 5 comparable sales", price: "0.50", is_live: true },
   ],
@@ -42,8 +43,6 @@ const units: FoundUnit[] = toUnits(loadAgentData().find((f) => f.agent === lozen
   id: u.key,
   score: 1,
 }));
-
-const signer = keySigner(generatePrivateKey());
 
 function fakeFacilitator() {
   const calls = { verify: 0, settle: 0 };
@@ -64,7 +63,7 @@ function fakeFacilitator() {
 }
 
 function memoryOrders() {
-  const rows = new Map<string, { status: string; tx?: string; payer?: string; outcome?: SignedOutcome }>();
+  const rows = new Map<string, { status: string; tx?: string; payer?: string; outcome?: SignedOutcome; failures?: string[] }>();
   const store: OrderStore = {
     async start() {
       const id = crypto.randomUUID();
@@ -73,6 +72,9 @@ function memoryOrders() {
     },
     async answered(id, outcome, checked) {
       rows.set(id, { ...rows.get(id)!, outcome, status: checked ? "checked" : "running" });
+    },
+    async failedCheck({ orderId, outcome, failures }) {
+      rows.set(orderId, { ...rows.get(orderId)!, outcome, failures, status: "failed_check" });
     },
     async settled(id, tx, payer) {
       rows.set(id, { ...rows.get(id)!, status: "delivered", tx, payer });
@@ -87,6 +89,7 @@ function setup(answer: Answerer = groundedAnswerer) {
   const app = createApp(loadConfig({}), {
     loadAgent: async (id) => (id === lozenets.slug ? lozenets : null),
     searchUnits: async () => units,
+    lookupUnits: async (ids) => units.filter((u) => ids.includes(u.id)).map((u) => ({ id: u.id, agent_id: lozenets.id, text: u.text, as_of: u.as_of })),
     answer,
     signer,
     orders: orders.store,
@@ -173,6 +176,27 @@ describe("POST /agents/:id/price-check", () => {
     const res = await t.post(t.pay, lozenets.slug, { question: QUESTION });
     expect(res.status).toBe(422);
     expect(t.facilitator.calls.settle).toBe(0);
+  });
+
+  it("does not settle an answer with an invented citation, and marks the order failed (ticket 09)", async () => {
+    const inventive: Answerer = async (input) => {
+      const a = await groundedAnswerer(input);
+      return { ...a, citations: a.citations.map((c, i) => (i === 0 ? { ...c, quote: "Sold for €150,000" } : c)) };
+    };
+    t = setup(inventive);
+    const res = await t.post(t.pay, lozenets.slug, { question: QUESTION });
+    expect(res.status).toBe(422);
+    expect(await res.json()).toMatchObject({ error: "citation_check_failed", failures: ["citation 1: quote not found in unit"] });
+    expect(t.facilitator.calls.settle).toBe(0);
+    const [row] = [...t.orders.rows.values()];
+    expect(row).toMatchObject({ status: "failed_check", failures: ["citation 1: quote not found in unit"] });
+    expect(row.tx).toBeUndefined();
+  });
+
+  it("marks a passing order checked before it settles", async () => {
+    await t.post(t.pay, lozenets.slug, { question: QUESTION });
+    const [row] = [...t.orders.rows.values()];
+    expect(row.status).toBe("delivered");
   });
 
   it("turns away unknown agents and missing questions before asking for payment", async () => {

@@ -5,6 +5,7 @@ import { createEmbedder, searchUnits } from "@citable/knowledge";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Config } from "../config.js";
 import { claudeAnswerer, groundedAnswerer, type Answerer } from "./answer.js";
+import { supabaseUnitLookup, type UnitLookup } from "./citationCheck.js";
 import type { AgentLoader } from "./load.js";
 import { supabaseOrderStore, type OrderStore } from "./orders.js";
 import { keySigner, type OutcomeSigner } from "./outcome.js";
@@ -14,6 +15,7 @@ import type { UnitSearch } from "./priceCheck.js";
 export interface AgentDeps {
   loadAgent: AgentLoader;
   searchUnits: UnitSearch;
+  lookupUnits: UnitLookup;
   answer: Answerer;
   signer: OutcomeSigner;
   orders: OrderStore;
@@ -49,6 +51,7 @@ export function defaultAgentDeps(
   return {
     loadAgent: shared.loadAgent,
     searchUnits: (agentId, question) => searchUnits(db(), { agentId, question, embedder: embedder(), limit: 12 }),
+    lookupUnits: (ids) => supabaseUnitLookup(db())(ids),
     answer: (input) => answer()(input),
     get signer() {
       return signer();
@@ -56,6 +59,7 @@ export function defaultAgentDeps(
     orders: {
       start: (i) => orders().start(i),
       answered: (...a) => orders().answered(...a),
+      failedCheck: (i) => orders().failedCheck(i),
       settled: (...a) => orders().settled(...a),
     },
     facilitator: facilitatorClient(config.facilitatorUrl),
