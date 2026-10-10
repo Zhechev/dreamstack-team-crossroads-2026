@@ -14,6 +14,9 @@
 - [ ] One button sends exactly the cap in USDC to the problem wallet; shows the tx hash with a BaseScan link
 - [ ] After funding: "You can go back to Claude", plus a live list (polling) of payments with amounts and tx hashes
 - [ ] Copy says the agent can never spend more than the cap and the rest comes back
+- [ ] Buyer with no Base Sepolia ETH: the page explains it and links a faucet (or the page uses the gasless approval — Open Questions Q-14)
 
 **Starter prompt:**
 > Add a page at /approve/:problemId. Fetch {walletAddress, cap, funded, payments[]} from {CONNECTOR_URL}/problems/:problemId. Show a paper-slip card: "Budget for this question: {cap} USDC. The agent pays by itself and can never spend more. The rest comes back to you." Add "Connect MetaMask" (wagmi + viem, Base Sepolia, chain id 84532); if on the wrong network, offer to switch. Then a full-width "Approve {cap} USDC" button that sends an ERC-20 transfer of exactly {cap} USDC (contract {USDC_ADDRESS}, 6 decimals) to walletAddress. Show the tx hash in JetBrains Mono with a BaseScan link. After funding, show "Done, go back to Claude" and a live list of payments polled every 3 seconds. Do not create or change any Supabase tables.
+
+**Spike findings (ticket 03, GO):** a plain USDC transfer costs the buyer gas, so the buyer needs Base Sepolia ETH as well as USDC — this blocked the first spike run (the faucet had sent ETH to Ethereum Sepolia). Decide Q-14 before building: plain transfer, or the buyer signs an EIP-3009 `transferWithAuthorization` in MetaMask and the connector submits it (buyer needs no ETH).
