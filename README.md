@@ -12,8 +12,7 @@ Team: Kris Georgiev, Mitko Zhechev.
 | Path | What |
 |---|---|
 | `packages/protocol` | Shared zod schemas: Evaluation, Manifest, SignedOutcome, Review, Receipt |
-| `apps/connector` | Hosted MCP buyer connector *(coming)* |
-| `apps/stall` | Hosted expert agent runtime *(coming)* |
+| `apps/connector` | One hosted service: `/mcp` buyer connector + `/agents/:id/...` expert agent routes *(coming)* |
 | `apps/web` | Lovable app — reserved, imported in ticket 20; don't edit by hand |
 | `supabase/` | Migrations + Edge Functions *(coming)* |
 | `spikes/` | Throwaway proofs (e.g. x402 problem-wallet payment) |
