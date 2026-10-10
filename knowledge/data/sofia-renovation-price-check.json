@@ -1,0 +1,35 @@
+{
+  "agent": "sofia-renovation-price-check",
+  "area": "Sofia",
+  "deal_source": "Stoyan Kolev: completed jobs",
+  "job_label": "Completed job",
+  "price_label": "Final price",
+  "passages": [
+    {
+      "key": "base-renovation-costs",
+      "layer": "base",
+      "source": "Citable renovation guidance (demo, illustrative)",
+      "source_url": null,
+      "as_of": "2026-09-01",
+      "text": "A full bathroom renovation means stripping to the walls, new waterproofing, plumbing and electrics, tiles on walls and floor, and new sanitaryware. Labour is usually about half of the final price; mid-range tiles and fittings make up most of the rest."
+    },
+    {
+      "key": "expert-bathroom-notes",
+      "layer": "expert",
+      "source": "Stoyan Kolev: job notes",
+      "source_url": null,
+      "as_of": "2026-09-30",
+      "text": "In my Sofia jobs a full bathroom takes two to three weeks. Moving the shower or the toilet adds roughly EUR 600 to 900 for new drains, and a walk-in shower with glass costs about EUR 400 more than a bathtub."
+    }
+  ],
+  "jobs": [
+    { "key": "job-r01", "service": "full bathroom renovation", "size_m2": 8, "scope": "tiles floor to ceiling, walk-in shower, new plumbing and electrics", "district": "Lozenets", "price_eur": 7200, "completed_on": "2026-09-29" },
+    { "key": "job-r02", "service": "full bathroom renovation", "size_m2": 7, "scope": "tiles floor to ceiling, bathtub, new plumbing", "district": "Iztok", "price_eur": 5900, "completed_on": "2026-09-16" },
+    { "key": "job-r03", "service": "full bathroom renovation", "size_m2": 9, "scope": "tiles floor to ceiling, walk-in shower, toilet moved, new plumbing and electrics", "district": "Lozenets", "price_eur": 8600, "completed_on": "2026-09-03" },
+    { "key": "job-r04", "service": "full bathroom renovation", "size_m2": 8, "scope": "tiles floor to ceiling, bathtub, new plumbing and electrics", "district": "Mladost", "price_eur": 6500, "completed_on": "2026-08-21" },
+    { "key": "job-r05", "service": "full bathroom renovation", "size_m2": 6, "scope": "tiles floor to ceiling, shower tray, new plumbing", "district": "Studentski grad", "price_eur": 4900, "completed_on": "2026-08-07" },
+    { "key": "job-r06", "service": "full bathroom renovation", "size_m2": 8, "scope": "tiles floor to ceiling, walk-in shower, new plumbing", "district": "Hladilnika", "price_eur": 6900, "completed_on": "2026-07-24" },
+    { "key": "job-r07", "service": "kitchen renovation", "size_m2": 12, "scope": "new cabinets, worktop, tiles and electrics", "district": "Lozenets", "price_eur": 9800, "completed_on": "2026-09-10" },
+    { "key": "job-r08", "service": "kitchen renovation", "size_m2": 10, "scope": "new cabinets, worktop and tiles", "district": "Iztok", "price_eur": 8200, "completed_on": "2026-08-15" }
+  ]
+}

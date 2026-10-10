@@ -1,0 +1,33 @@
+{
+  "agent": "sofia-property-lawyer-fees",
+  "area": "Sofia",
+  "deal_source": "Desislava Nikolova: completed engagements",
+  "job_label": "Completed engagement",
+  "price_label": "Fee",
+  "passages": [
+    {
+      "key": "base-preliminary-contract",
+      "layer": "base",
+      "source": "Buying a property in Bulgaria: guidance (demo summary, illustrative)",
+      "source_url": "https://www.registryagency.bg",
+      "as_of": "2026-01-01",
+      "text": "Buyer and seller usually sign a preliminary contract before the notary deed: it fixes the price, the deposit, the deadline for the deed and what happens if either side backs out. The notary deed itself is signed later, before a notary."
+    },
+    {
+      "key": "expert-fee-notes",
+      "layer": "expert",
+      "source": "Desislava Nikolova: fee notes",
+      "source_url": null,
+      "as_of": "2026-09-30",
+      "text": "My fixed fee for drafting a preliminary contract includes a check of the property register for encumbrances and one round of changes with the other side. Attending the notary deed is billed separately."
+    }
+  ],
+  "jobs": [
+    { "key": "job-l01", "service": "drafting a preliminary contract for a flat purchase", "scope": "register check for encumbrances, one round of changes", "district": "Lozenets", "price_eur": 450, "completed_on": "2026-09-30" },
+    { "key": "job-l02", "service": "drafting a preliminary contract for a flat purchase", "scope": "register check for encumbrances, two rounds of changes", "district": "Mladost", "price_eur": 500, "completed_on": "2026-09-18" },
+    { "key": "job-l03", "service": "drafting a preliminary contract for a flat purchase", "scope": "register check for encumbrances", "district": "Iztok", "price_eur": 350, "completed_on": "2026-09-04" },
+    { "key": "job-l04", "service": "drafting a preliminary contract for a flat purchase", "scope": "register check for encumbrances, deposit held in escrow, one round of changes", "district": "Lozenets", "price_eur": 550, "completed_on": "2026-08-25" },
+    { "key": "job-l05", "service": "drafting a preliminary contract for a flat purchase", "scope": "register check for encumbrances, one round of changes", "district": "Center", "price_eur": 400, "completed_on": "2026-08-12" },
+    { "key": "job-l06", "service": "attending the notary deed for a flat purchase", "scope": "deed review and attendance", "district": "Lozenets", "price_eur": 300, "completed_on": "2026-09-22" }
+  ]
+}

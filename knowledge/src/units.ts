@@ -29,16 +29,33 @@ const Deal = z.object({
   street: z.string().min(1),
 });
 
+/** A finished piece of paid work (a renovation, a lawyer's engagement): what it was and what it cost. */
+const Job = z.object({
+  key: z.string().regex(/^job-/),
+  service: z.string().min(1),
+  size_m2: z.number().positive().optional(),
+  scope: z.string().min(1),
+  district: z.string().min(1),
+  price_eur: z.number().int().positive(),
+  completed_on: z.iso.date(),
+});
+
 export const AgentData = z.object({
   agent: z.string().min(1),
   area: z.string().min(1),
+  /** Source name shown on records: closed deals, or completed jobs. */
   deal_source: z.string().min(1),
+  /** How a job record starts and names its price, e.g. "Completed job" / "Final price", "Engagement" / "Fee". */
+  job_label: z.string().default("Completed job"),
+  price_label: z.string().default("Final price"),
   passages: z.array(Passage),
-  deals: z.array(Deal),
+  deals: z.array(Deal).default([]),
+  jobs: z.array(Job).default([]),
 });
 
 export type AgentData = z.infer<typeof AgentData>;
 export type Deal = z.infer<typeof Deal>;
+export type Job = z.infer<typeof Job>;
 
 /** One row of the `units` table, minus agent_id and embedding. */
 export interface UnitRow {
@@ -72,6 +89,16 @@ export function dealText(deal: Deal, area: string): string {
   ].join(" ");
 }
 
+/** The citable text of a job record; the last sentence ("Final price … on …") is what answers quote. */
+export function jobText(job: Job, file: Pick<AgentData, "area" | "job_label" | "price_label">): string {
+  const size = job.size_m2 === undefined ? "" : `${job.size_m2} m², `;
+  const perM2 = job.size_m2 === undefined ? "" : ` (${eur(Math.round(job.price_eur / job.size_m2))}/m²)`;
+  return [
+    `${file.job_label}: ${job.service}, ${size}${job.scope}, ${job.district}, ${file.area}.`,
+    `${file.price_label} ${eur(job.price_eur)}${perM2} on ${job.completed_on}.`,
+  ].join(" ");
+}
+
 export function toUnits(file: AgentData): UnitRow[] {
   const passages: UnitRow[] = file.passages.map((p) => ({ ...p, kind: "passage", data: null }));
   const deals: UnitRow[] = file.deals.map((d) => ({
@@ -84,5 +111,20 @@ export function toUnits(file: AgentData): UnitRow[] {
     text: dealText(d, file.area),
     data: { ...d, area: file.area, price_per_m2_eur: Math.round(d.price_eur / d.area_m2), synthetic: true },
   }));
-  return [...passages, ...deals];
+  const jobs: UnitRow[] = file.jobs.map((j) => ({
+    key: j.key,
+    layer: "expert",
+    source: file.deal_source,
+    source_url: null,
+    as_of: j.completed_on,
+    kind: "record",
+    text: jobText(j, file),
+    data: {
+      ...j,
+      area: file.area,
+      ...(j.size_m2 === undefined ? {} : { price_per_m2_eur: Math.round(j.price_eur / j.size_m2) }),
+      synthetic: true,
+    },
+  }));
+  return [...passages, ...deals, ...jobs];
 }
