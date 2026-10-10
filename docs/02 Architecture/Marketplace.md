@@ -11,7 +11,7 @@ owner: Mitko (data) · Kris (Lovable UI)
 - **Landing:** headline, how it works (three tiers), "Add Citable to Claude".
 - **Browse:** expert agents with tiers and prices, Expert Verified (vN) badge, rating.
 - **Buyer setup:** get private connector link (rotate / revoke).
-- **Budget approval page:** opened once per problem from Claude's link; connect MetaMask (Base Sepolia), approve the cap; then a live receipt of every automatic payment → [[Payments & Escrow]].
+- **Budget approval page** (`/approve/:problemId`): opened once per problem from Claude's link; connect MetaMask (Base Sepolia) and **sign once** — a gasless EIP-3009 authorisation of exactly the cap, which the connector submits (buyer needs no ETH); then a live list of every automatic payment. Reads and funds through the connector (`GET /problems/:id`, `POST /problems/:id/fund`), never Supabase directly → [[Payments & Escrow]], [[ADR-011 Buyer wallet and spend permission|ADR-011]].
 - **Expert console (shown, not built in the MVP):**
   - *Agent version* — sources, rules, test results, **Authorise** → [[Expert Agent Lifecycle]].
   - *Review queue* — tier-2 tasks: read the automated answer, **Approve** or **Edit & approve**.
