@@ -5,7 +5,7 @@
 
 -- Terms v1: keep in sync with `node terms/hash.mjs`.
 insert into terms_versions (version, hash) values
-  ('v1', '0xf9b91ca563e63f98b44f1a83eadfde2a1aa1dfe747467d1a8f91c4fa2f2b0757');
+  ('v1', '0x06fd3314ade9326073a9ddde6639e93e79346ef43ba30b00b74998672860f726');
 
 insert into experts (id, slug, name, headline, city, bio, is_demo, demo_label) values
   ('11111111-0000-4000-8000-000000000001', 'elena-petrova', 'Elena Petrova',

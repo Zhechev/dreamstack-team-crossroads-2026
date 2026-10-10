@@ -56,7 +56,7 @@ describe("price check against Supabase", () => {
       citations_verified: true,
       answer: outcome.text,
       signature: outcome.signature,
-      terms_hash: "0xf9b91ca563e63f98b44f1a83eadfde2a1aa1dfe747467d1a8f91c4fa2f2b0757",
+      terms_hash: "0x06fd3314ade9326073a9ddde6639e93e79346ef43ba30b00b74998672860f726",
     });
     expect(order.citations).toEqual(outcome.citations);
 
@@ -78,7 +78,7 @@ describe("price check against Supabase", () => {
         question: QUESTION,
         status: "awaiting_payment",
         price: 0.5,
-        terms_hash: "0xf9b91ca563e63f98b44f1a83eadfde2a1aa1dfe747467d1a8f91c4fa2f2b0757",
+        terms_hash: "0x06fd3314ade9326073a9ddde6639e93e79346ef43ba30b00b74998672860f726",
       })
       .select("id")
       .single();
