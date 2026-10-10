@@ -130,7 +130,7 @@ function animateBalance(to) {
   shownBalance = to;
   const start = performance.now();
   const step = (t) => {
-    const k = Math.min(1, (t - start) / 900);
+    const k = Math.min(1, Math.max(0, (t - start) / 900));
     const v = from + (to - from) * (1 - Math.pow(1 - k, 3));
     $("balance").firstChild.textContent = v.toFixed(2) + " ";
     if (k < 1) requestAnimationFrame(step);
@@ -158,7 +158,7 @@ function render(feed) {
   if (v.wallet) {
     $("wallet").textContent = v.wallet.slice(0, 6) + "…" + v.wallet.slice(-4);
     $("wallet").href = ADDR + v.wallet;
-  } else $("walletLine").remove();
+  } else $("walletLine")?.remove();
 
   if (!$("balance").firstChild) $("balance").append(document.createTextNode(""), el("span", "", "USDC"));
   if (v.big === null) $("balance").firstChild.textContent = "— ";
