@@ -42,6 +42,13 @@ async function main() {
   console.log(`Buyer  ${buyer.address}: ${usdc(await balance(buyer.address))}, ${formatEther(await pub.getBalance({ address: buyer.address }))} ETH`);
   console.log(`Seller ${seller}: ${usdc(await balance(seller))}`);
 
+  // The buyer pays gas for the cap transfer and the gas seed, so it needs ETH as well as USDC.
+  const minEth = GAS_SEED * 3n;
+  if ((await pub.getBalance({ address: buyer.address })) < minEth) {
+    throw new Error(`Buyer needs at least ${formatEther(minEth)} Base Sepolia ETH for gas (faucet: https://docs.base.org/base-chain/tools/network-faucets)`);
+  }
+  if ((await balance(buyer.address)) < CAP) throw new Error(`Buyer needs at least ${usdc(CAP)} (faucet: https://faucet.circle.com)`);
+
   // 1. Fresh problem wallet. Keys are kept on disk so funds are recoverable if the run crashes.
   const key = generatePrivateKey();
   const problem = privateKeyToAccount(key);
