@@ -2,6 +2,9 @@
 import { Evaluation } from "@citable/protocol";
 import { McpServer, type CallToolResult } from "@modelcontextprotocol/server";
 import { z } from "zod";
+import { FundingError } from "../problems/authorization.js";
+import { MAX_CAP, type Problems } from "../problems/service.js";
+import type { ConnectorLink } from "./links.js";
 import type { ExpertSearch } from "./search.js";
 
 /** Calls an expert agent's free evaluation route and returns its Evaluation unchanged, or null if the agent is unknown. */
@@ -10,13 +13,15 @@ export type AgentEvaluator = (agentId: string, question: string) => Promise<Eval
 export interface McpDeps {
   searchExperts: ExpertSearch;
   evaluateAgent: AgentEvaluator;
+  problems: Problems;
 }
 
 const INSTRUCTIONS = `Citable connects you to expert-verified agents that answer with cited sources, each figure with a source and an as-of date.
 Flow for a buyer's question:
 1. find_expert — show the buyer the top agents (name, expert, badge, rating, price). Mention a demo label if present.
 2. evaluate — free. Tell the buyer whether the agent can answer, what they will get and the price.
-3. Before anything is paid, the buyer must approve a budget (a hard cap) — never pay without it.
+3. approve_budget — propose a cap (e.g. "2.00" for one 0.50 price check plus room for follow-ups), create the budget and give the buyer the approval link. They approve once in MetaMask; nothing is paid without it.
+4. budget_status — check that the budget is funded before asking an agent anything paid.
 Prices are in USDC. Say "price check", never "appraisal" or "valuation".`;
 
 const json = (value: unknown): CallToolResult => ({
@@ -26,7 +31,8 @@ const json = (value: unknown): CallToolResult => ({
 
 const error = (text: string): CallToolResult => ({ content: [{ type: "text", text }], isError: true });
 
-export function buildMcpServer(deps: McpDeps): McpServer {
+/** One server per request, bound to the buyer link that called it. */
+export function buildMcpServer(deps: McpDeps, link: ConnectorLink): McpServer {
   const server = new McpServer({ name: "citable", version: "0.1.0" }, { instructions: INSTRUCTIONS });
 
   server.registerTool(
@@ -70,6 +76,56 @@ export function buildMcpServer(deps: McpDeps): McpServer {
       const evaluation = await deps.evaluateAgent(agent_id, question);
       if (!evaluation) return error(`No agent "${agent_id}". Use an agent_id from find_expert.`);
       return json(evaluation);
+    },
+  );
+
+  server.registerTool(
+    "approve_budget",
+    {
+      title: "Open a budget",
+      description:
+        `Create a capped budget for this question and get the link where the buyer approves it once in MetaMask (no gas needed). ` +
+        `The agent can never spend more than the cap; the rest is returned when the problem is closed. Max ${MAX_CAP} USDC. ` +
+        "Only call this after evaluate shows the agent can answer, and give the buyer the approval_url.",
+      inputSchema: z.object({
+        cap: z.string().regex(/^\d+(\.\d{1,6})?$/).describe('Budget cap in USDC, e.g. "2.00"'),
+      }),
+      annotations: { readOnlyHint: false, destructiveHint: false, idempotentHint: false, openWorldHint: true },
+    },
+    async ({ cap }) => {
+      try {
+        const state = await deps.problems.open(link.id, cap);
+        return json({
+          problem_id: state.problem_id,
+          cap: state.cap,
+          wallet_address: state.wallet_address,
+          approval_url: state.approval_url,
+          next: "Send the buyer the approval_url. When they say they approved, call budget_status.",
+        });
+      } catch (e) {
+        if (e instanceof FundingError) return error(e.message);
+        throw e;
+      }
+    },
+  );
+
+  server.registerTool(
+    "budget_status",
+    {
+      title: "Budget status",
+      description:
+        "Whether the buyer has approved the budget, and how much is spent and remaining, with each payment's transaction. " +
+        "Without problem_id it shows the buyer's latest open budget.",
+      inputSchema: z.object({
+        problem_id: z.string().optional().describe("problem_id from approve_budget"),
+      }),
+      annotations: { readOnlyHint: true, openWorldHint: true },
+    },
+    async ({ problem_id }) => {
+      const state = await deps.problems.statusFor(link.id, problem_id);
+      if (!state) return error("No open budget. Call approve_budget first.");
+      const { authorization: _, ...rest } = state;
+      return json(rest);
     },
   );
 

@@ -5,8 +5,11 @@ import type { LinkVerifier } from "../mcp/links.js";
 import { buildMcpServer, type McpDeps } from "../mcp/server.js";
 
 export function createMcpRoutes(deps: McpDeps & { verifyLink: LinkVerifier }) {
-  // Stateless: a fresh server per request, so any instance can serve any call.
-  const handler = createMcpHandler(() => buildMcpServer(deps));
+  // Stateless: a fresh server per request, bound to the link verified below, so any instance can serve any call.
+  const handler = createMcpHandler(({ authInfo }) => {
+    if (!authInfo?.clientId) throw new Error("MCP request without a verified connector link");
+    return buildMcpServer(deps, { id: authInfo.clientId, owner_address: (authInfo.extra?.ownerAddress as string | null) ?? null });
+  });
   const mcp = new Hono();
 
   mcp.all("/:token", async (c) => {

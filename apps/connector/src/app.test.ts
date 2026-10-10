@@ -13,8 +13,6 @@ describe("connector service", () => {
 
   it.each([
     ["POST", "/agents/lozenets-pricing/price-check", 8],
-    ["GET", "/problems/p1", 11],
-    ["POST", "/problems/p1/fund", 11],
   ])("%s %s is stubbed for ticket %i", async (method, path, ticket) => {
     const res = await app.request(path, { method });
     expect(res.status).toBe(501);

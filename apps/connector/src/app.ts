@@ -9,13 +9,18 @@ import { supabaseLinkVerifier, type LinkVerifier } from "./mcp/links.js";
 import { supabaseExpertSearch, type ExpertSearch } from "./mcp/search.js";
 import { createAgentRoutes } from "./routes/agents.js";
 import { createMcpRoutes } from "./routes/mcp.js";
-import { problems } from "./routes/problems.js";
+import { baseSepoliaChain, type Chain } from "./problems/chain.js";
+import { createProblems } from "./problems/service.js";
+import { supabaseProblemStore, type ProblemStore } from "./problems/store.js";
+import { createProblemRoutes } from "./routes/problems.js";
 
 /** Collaborators the routes need; tests pass fakes, production builds them from config. */
 export type AppDeps = {
   loadAgent: AgentLoader;
   verifyLink: LinkVerifier;
   searchExperts: ExpertSearch;
+  problemStore: ProblemStore;
+  chain: Chain;
 };
 
 export function createApp(config: Config, deps: Partial<AppDeps> = {}) {
@@ -27,6 +32,25 @@ export function createApp(config: Config, deps: Partial<AppDeps> = {}) {
   const loadAgent = deps.loadAgent ?? ((id) => agentLoader()(id));
   const verifyLink = deps.verifyLink ?? ((token) => linkVerifier()(token));
   const searchExperts = deps.searchExperts ?? ((q, budget) => expertSearch()(q, budget));
+  const store = lazy(() => deps.problemStore ?? supabaseProblemStore(db()));
+  const chain =
+    deps.chain ?? baseSepoliaChain({ rpcUrl: config.rpcUrl, usdcAddress: config.usdcAddress, gasFunderKey: config.gasFunderKey });
+  const problems = createProblems({
+    store: {
+      create: (p) => store().create(p),
+      get: (id) => store().get(id),
+      latestOpen: (id) => store().latestOpen(id),
+      markFunded: (id, f) => store().markFunded(id, f),
+      setGasSeed: (id, tx) => store().setGasSeed(id, tx),
+    },
+    chain,
+    usdc: { chainId: config.chainId, usdcAddress: config.usdcAddress },
+    get walletSecret() {
+      if (!config.problemWalletSecret) throw new Error("Set PROBLEM_WALLET_SECRET (see .env.example)");
+      return config.problemWalletSecret;
+    },
+    webAppUrl: config.webAppUrl,
+  });
 
   const app = new Hono();
 
@@ -44,9 +68,9 @@ export function createApp(config: Config, deps: Partial<AppDeps> = {}) {
   };
 
   app.get("/health", (c) => c.json({ ok: true }));
-  app.route("/mcp", createMcpRoutes({ verifyLink, searchExperts, evaluateAgent }));
+  app.route("/mcp", createMcpRoutes({ verifyLink, searchExperts, evaluateAgent, problems }));
   app.route("/agents", createAgentRoutes({ loadAgent }));
-  app.route("/problems", problems);
+  app.route("/problems", createProblemRoutes({ problems, allowedOrigins: config.allowedOrigins }));
   return app;
 }
 
