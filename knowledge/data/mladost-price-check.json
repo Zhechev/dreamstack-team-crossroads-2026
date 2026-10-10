@@ -1,7 +1,7 @@
 {
   "agent": "mladost-price-check",
   "area": "Mladost, Sofia",
-  "deal_source": "Georgi Ivanov: closed deals (synthetic)",
+  "deal_source": "Georgi Ivanov: closed deals",
   "passages": [
     {
       "key": "base-offplan-vs-completed",

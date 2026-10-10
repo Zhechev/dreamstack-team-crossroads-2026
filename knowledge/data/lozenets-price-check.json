@@ -1,7 +1,7 @@
 {
   "agent": "lozenets-price-check",
   "area": "Lozenets, Sofia",
-  "deal_source": "Elena Petrova: closed deals (synthetic)",
+  "deal_source": "Elena Petrova: closed deals",
   "passages": [
     {
       "key": "base-nsi-sofia-trend",
@@ -30,7 +30,7 @@
     {
       "key": "expert-parking-adjustment",
       "layer": "expert",
-      "source": "Elena Petrova: deal notes (synthetic)",
+      "source": "Elena Petrova: deal notes",
       "source_url": null,
       "as_of": "2026-09-30",
       "text": "In my Lozenets deals a parking space adds roughly EUR 8,000 to 12,000, and a ground floor or a top floor without a lift sells about 5% below comparable flats."

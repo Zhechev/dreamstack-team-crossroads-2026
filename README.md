@@ -54,7 +54,7 @@ pnpm --filter @citable/knowledge seed      # upsert units from knowledge/data/*.
 pnpm --filter @citable/knowledge test:db   # search tests against the running Supabase
 ```
 
-Run the seeder again after every `supabase db reset`. Deal records are synthetic and labelled so; base passages are illustrative summaries, not real statistics. With `OPENAI_API_KEY` set, the seeder embeds new or changed units with `text-embedding-3-small` and search adds vector ranking. Without it, search uses full-text + trigram only. `search_units(agent, question)` can only be called with the service role.
+Run the seeder again after every `supabase db reset`. Deal records are synthetic (demo data, flagged `synthetic: true` in each unit's `data`, but not labelled in the text or source names shown to buyers — MVP decision 2026-10-10); base passages are illustrative summaries, not real statistics. With `OPENAI_API_KEY` set, the seeder embeds new or changed units with `text-embedding-3-small` and search adds vector ranking. Without it, search uses full-text + trigram only. `search_units(agent, question)` can only be called with the service role.
 
 ### Edge Functions
 
