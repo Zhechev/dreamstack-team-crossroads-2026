@@ -92,6 +92,8 @@ curl -X POST http://localhost:4010/agents/lozenets-price-check/evaluate \
 # → {"agent_id":"lozenets-price-check","can_answer":true,"deliverable":"Fair price range + 5 comparable sales, …","price":"0.50","expires_at":"…"}
 ```
 
+**MCP for Claude:** `POST /mcp/<token>` (Streamable HTTP, stateless). The token is a connector link from `connector_link/issue`; unknown or revoked tokens get 401. Tools: `find_expert(question, budget?)` → top 3 agents, `evaluate(agent_id, question)` → the agent's Evaluation. In Claude: Settings → Connectors → Add custom connector → `https://<public host>/mcp/<token>`.
+
 `POST /agents/:id/evaluate` is free (no x402) and deterministic: `can_answer` is true only for a property question that names the agent's area. Out of scope returns `can_answer: false` and price `"0.00"`. Agent config (sources, rules, prices, version, payout address) comes from the authorised version in Supabase and is cached for 60 s.
 
 ## Licence

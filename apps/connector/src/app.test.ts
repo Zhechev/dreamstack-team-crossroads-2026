@@ -12,7 +12,6 @@ describe("connector service", () => {
   });
 
   it.each([
-    ["POST", "/mcp/some-token", 10],
     ["POST", "/agents/lozenets-pricing/price-check", 8],
     ["GET", "/problems/p1", 11],
     ["POST", "/problems/p1/fund", 11],

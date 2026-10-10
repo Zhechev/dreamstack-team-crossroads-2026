@@ -26,12 +26,18 @@ importers:
       '@hono/node-server':
         specifier: 2.1.1
         version: 2.1.1(hono@4.13.9)
+      '@modelcontextprotocol/server':
+        specifier: 2.1.0
+        version: 2.1.0
       '@supabase/supabase-js':
         specifier: 2.117.3
         version: 2.117.3
       hono:
         specifier: 4.13.9
         version: 4.13.9
+      zod:
+        specifier: 4.6.5
+        version: 4.6.5
     devDependencies:
       tsx:
         specifier: 4.23.15
@@ -225,6 +231,14 @@ packages:
 
   '@jridgewell/trace-mapping@0.3.31':
     resolution: {integrity: sha512-zzNR+SdQSDJzc8joaeP8QQoCQr8NuYx2dIIytl1QeBEZHJ9uW6hebsrYgbz8hJwUQao3TWCMtmfV8Nu1twOLAw==}
+
+  '@modelcontextprotocol/core@2.1.0':
+    resolution: {integrity: sha512-YdFj5gMRHr0gYNAhTbQDgjLHiEJdIAUYxomhKseUNye7ZGlISQmUoLh2sveFFCiQ7j2YMffT1kgSND0FSfIFjQ==}
+    engines: {node: '>=20'}
+
+  '@modelcontextprotocol/server@2.1.0':
+    resolution: {integrity: sha512-FdvwZU5N03O77Suh35JqjAqq5R1ZTEPFtwu6N4BgBq28qrQtrCnpbLL5U2pwYCuE194jAw0xnlOVmIqhfoYuUQ==}
+    engines: {node: '>=20'}
 
   '@oxc-project/types@0.153.0':
     resolution: {integrity: sha512-jSNrRIyvPVLL5E1z/tS5zLAprosGz/FuI1PWwEOz59j3E4TTTzSpqKb/RDGqJhhW0QHYISGXxq582wGx6T11Tw==}
@@ -762,6 +776,15 @@ snapshots:
     dependencies:
       '@jridgewell/resolve-uri': 3.1.2
       '@jridgewell/sourcemap-codec': 1.6.0
+
+  '@modelcontextprotocol/core@2.1.0':
+    dependencies:
+      zod: 4.6.5
+
+  '@modelcontextprotocol/server@2.1.0':
+    dependencies:
+      '@modelcontextprotocol/core': 2.1.0
+      zod: 4.6.5
 
   '@oxc-project/types@0.153.0': {}
 

@@ -15,8 +15,10 @@
   "dependencies": {
     "@citable/protocol": "workspace:*",
     "@hono/node-server": "2.1.1",
+    "@modelcontextprotocol/server": "2.1.0",
     "@supabase/supabase-js": "2.117.3",
-    "hono": "4.13.9"
+    "hono": "4.13.9",
+    "zod": "4.6.5"
   },
   "devDependencies": {
     "tsx": "4.23.15"
