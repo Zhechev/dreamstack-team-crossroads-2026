@@ -1,0 +1,22 @@
+{
+  "name": "@citable/connector",
+  "version": "0.1.0",
+  "private": true,
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch --env-file-if-exists=../../.env src/index.ts",
+    "start": "node --env-file-if-exists=../../.env dist/index.js",
+    "build": "tsc -p tsconfig.build.json",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@citable/protocol": "workspace:*",
+    "@hono/node-server": "2.1.1",
+    "hono": "4.13.9"
+  },
+  "devDependencies": {
+    "tsx": "4.23.15"
+  }
+}
