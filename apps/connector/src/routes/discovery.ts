@@ -9,7 +9,7 @@ export const SERVER_NAME = "app.lovable.citable/connector";
 export const SERVER_VERSION = "0.1.0";
 export const SERVER_TITLE = "Citable — expert-verified price checks";
 export const SERVER_DESCRIPTION =
-  "Fair-price checks for property from local experts' recent closed deals, every figure cited with its source and as-of date. " +
+  "Fair-price checks for property, renovations and property lawyers' fees from local experts' private data (closed deals, completed jobs, recent fees), every figure cited with its source and as-of date. " +
   "Your AI pays per answer (0.50 USDC) from a budget you top up once.";
 
 const CARD_TYPE = "application/mcp-server-card+json";

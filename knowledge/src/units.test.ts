@@ -5,8 +5,31 @@ const files = loadAgentData();
 const daysBefore = (date: string) => (Date.parse(DEMO_TODAY) - Date.parse(date)) / 86_400_000;
 
 describe("demo knowledge", () => {
-  it("has data for all three demo agents", () => {
-    expect(files.map((f) => f.agent)).toEqual(["lozenets-price-check", "mladost-price-check", "varna-coast-price-check"]);
+  it("has data for all five demo agents", () => {
+    expect(files.map((f) => f.agent)).toEqual([
+      "lozenets-price-check",
+      "mladost-price-check",
+      "sofia-property-lawyer-fees",
+      "sofia-renovation-price-check",
+      "varna-coast-price-check",
+    ]);
+  });
+
+  it("has at least 5 recent 8 m²-ish bathroom jobs and preliminary-contract fees", () => {
+    const jobs = (agent: string, service: string) =>
+      files.find((f) => f.agent === agent)!.jobs.filter((j) => j.service.includes(service) && daysBefore(j.completed_on) <= 90);
+    expect(jobs("sofia-renovation-price-check", "bathroom").length).toBeGreaterThanOrEqual(5);
+    expect(jobs("sofia-property-lawyer-fees", "preliminary contract").length).toBeGreaterThanOrEqual(5);
+  });
+
+  it("writes job records as one quotable price sentence", () => {
+    const lawyer = toUnits(files.find((f) => f.agent === "sofia-property-lawyer-fees")!).find((u) => u.key === "job-l01")!;
+    expect(lawyer.text).toBe(
+      "Completed engagement: drafting a preliminary contract for a flat purchase, register check for encumbrances, one round of changes, Lozenets, Sofia. Fee €450 on 2026-09-30.",
+    );
+    const bathroom = toUnits(files.find((f) => f.agent === "sofia-renovation-price-check")!).find((u) => u.key === "job-r01")!;
+    expect(bathroom.text).toMatch(/, 8 m², .* Final price €7,200 \(€900\/m²\) on 2026-09-29\.$/);
+    expect(bathroom.data).toMatchObject({ synthetic: true, completed_on: bathroom.as_of, price_per_m2_eur: 900 });
   });
 
   it("has at least 5 two-bed Lozenets comparables from the last 90 days", () => {
@@ -18,10 +41,11 @@ describe("demo knowledge", () => {
   it("marks every deal record synthetic internally only, and dates it by its sale", () => {
     for (const file of files) {
       for (const unit of toUnits(file).filter((u) => u.kind === "record")) {
-        expect(unit.text).toMatch(/^Closed deal:/);
+        expect(unit.text).toMatch(/^(Closed deal|Completed job|Completed engagement):/);
         expect(unit.text).not.toMatch(/synthetic/i);
         expect(unit.source).not.toMatch(/synthetic/i);
-        expect(unit.data).toMatchObject({ synthetic: true, sold_on: unit.as_of });
+        expect(unit.data).toMatchObject({ synthetic: true });
+        expect(unit.as_of).toBe(unit.data!.sold_on ?? unit.data!.completed_on);
       }
     }
   });

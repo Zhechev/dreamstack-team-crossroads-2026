@@ -37,11 +37,11 @@ Needs Docker and the [Supabase CLI](https://supabase.com/docs/guides/local-devel
 
 ```sh
 supabase start      # local Postgres, API and Studio
-supabase db reset   # apply supabase/migrations, then supabase/seed.sql
+supabase db reset   # apply supabase/migrations, then supabase/seed.sql + seed_services.sql
 supabase test db    # pgTAP tests in supabase/tests
 ```
 
-The seed has three fictional demo experts; for the MVP they carry no demo label in the product. Each has one Expert Verified agent with three capabilities: price check 0.50, human review 20, consultation 50+. The anon key can read `experts`, `agents`, the authorised `agent_versions`, `capabilities`, `ratings`, `terms_versions` and the `marketplace_agents` view. Nobody writes with the anon key: writes go through Edge Functions using the service role.
+The seed has five fictional demo experts; for the MVP they carry no demo label in the product. Three are real-estate agents (`seed.sql`); `seed_services.sql` adds a Sofia renovation contractor and a property lawyer for the demo's follow-up questions (ticket 28). Each has one Expert Verified agent with three capabilities: price check (fee check for the lawyer) 0.50, human review 20, consultation 50+. The anon key can read `experts`, `agents`, the authorised `agent_versions`, `capabilities`, `ratings`, `terms_versions` and the `marketplace_agents` view. Nobody writes with the anon key: writes go through Edge Functions using the service role.
 
 **Schema ownership:** Claude Code owns the schema in `supabase/migrations`. Lovable must never create or alter tables; it only reads through the anon key and calls Edge Functions.
 
@@ -96,7 +96,7 @@ node --env-file=.env.hosted knowledge/dist/seed.js                              
 (cd apps/connector && npx tsx --env-file=../../.env.hosted src/scripts/configure-demo.ts)   # agent signing/payout addresses
 ```
 
-Running the seed and `configure-demo` again is safe. `db push --include-seed` is meant for an empty project only: the seed inserts fixed ids and fails if the rows already exist.
+Running the seed and `configure-demo` again is safe. `db push --include-seed` is meant for an empty project only: the seed inserts fixed ids and fails if the rows already exist. `seed_services.sql` is re-runnable, so it can be applied to the existing hosted project on its own (SQL editor or the Management API).
 
 ## Connector service (hosted)
 
