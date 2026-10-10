@@ -5,7 +5,7 @@ owner: Kris
 ---
 # Payments & Escrow
 
-> How money moves. Decisions: [[ADR-001 Payments with x402 and USDC on Base]] · [[ADR-011 Buyer wallet and spend permission]] · [[ADR-020 Crypto hidden at the edges]] · [[ADR-013 Escrow for drafts]] (under review).
+> How money moves. Decisions: [[ADR-001 Payments with x402 and USDC on Base]] · [[ADR-011 Buyer wallet and spend permission]] · [[ADR-020 Crypto hidden at the edges]] · [[ADR-013 Escrow for drafts]] (deferred).
 
 ## MVP payment flow — one approval per problem, hard cap, then automatic
 1. After the free evaluation, Claude calls `approve_budget(cap)` → connector creates a **problem wallet** on Base Sepolia → returns a link.
@@ -26,7 +26,7 @@ Production: same UX with a spend permission scoped to the problem → [[ADR-011 
 | MVP | **live** | shown | shown |
 
 ## Escrow
-Not in the MVP. DreamEscrow stays in ADR-013 (under review) for later.
+Not in the MVP. DreamEscrow is deferred (ADR-013).
 
 ## Wallets
 - **Buyer:** their own MetaMask on Base Sepolia, funded from the Circle faucet (20 USDC per address per 2h). One approval per problem.
