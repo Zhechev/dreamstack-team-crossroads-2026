@@ -12,7 +12,7 @@ select is((select array_agg(price order by tier)::numeric[] from capabilities
   'price check 0.50, human review 20, consultation 50+');
 select is((select count(*) from capabilities where is_live), 3::bigint, 'only tier 1 is live');
 select is((select hash::text from terms_versions where version = 'v1'),
-  '0xf9b91ca563e63f98b44f1a83eadfde2a1aa1dfe747467d1a8f91c4fa2f2b0757', 'terms v1 hash seeded');
+  '0x06fd3314ade9326073a9ddde6639e93e79346ef43ba30b00b74998672860f726', 'terms v1 hash seeded');
 
 -- Anon reads the listing
 set local role anon;
