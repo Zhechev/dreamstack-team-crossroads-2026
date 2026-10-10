@@ -9,7 +9,7 @@ updated: 2026-10-10
 ## Product
 - **Citable** — the product. **DreamStack** — the team.
 - **Buyer** — a person who wants an outcome; acts through their **assistant** (Claude) with the [[Buyer Connector]] added.
-- **Expert** — the human professional behind an agent (e.g. a real-estate agent). Verified in production; the demo expert is fictional and labelled.
+- **Expert** — the human professional behind an agent (e.g. a real-estate agent). Verified in production; the demo experts are fictional (not labelled in the MVP).
 - **Seller** — the verified party (person or firm) that gets paid and signs Terms; owns one or more expert agents.
 - **Expert agent / seller agent** — the agent we build and host for an expert. Our runtime is **[[Stall]]**.
 - **Base layer** — public sources we collect and index for a category.

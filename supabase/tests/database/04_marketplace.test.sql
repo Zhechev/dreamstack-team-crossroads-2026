@@ -3,9 +3,8 @@ begin;
 select plan(20);
 
 -- Seed
-select is((select count(*) from experts where is_demo and demo_label = 'Demo expert, fictional'), 3::bigint,
-  'three demo experts, all labelled fictional');
-select is((select count(*) from experts where not is_demo), 0::bigint, 'no unlabelled experts');
+select is((select count(*) from experts), 3::bigint, 'three demo experts');
+select is((select count(*) from experts where demo_label is not null), 0::bigint, 'no demo labels shown in the MVP');
 select is((select count(*) from agent_versions where status = 'authorised'), 3::bigint,
   'every demo agent has one authorised version');
 select is((select array_agg(price order by tier)::numeric[] from capabilities
@@ -25,10 +24,10 @@ select is((select count(*) from agent_versions), 3::bigint, 'anon sees authorise
 select results_eq(
   $$ select slug, badge, rating, rating_count, demo_label from marketplace_agents order by slug $$,
   $$ values
-       ('lozenets-price-check', 'Expert Verified (v3)', 4.78, 23::bigint, 'Demo expert, fictional'),
-       ('mladost-price-check', 'Expert Verified (v2)', 4.55, 11::bigint, 'Demo expert, fictional'),
-       ('varna-coast-price-check', 'Expert Verified (v1)', 4.20, 5::bigint, 'Demo expert, fictional') $$,
-  'listing view shows badge, rating and demo label');
+       ('lozenets-price-check', 'Expert Verified (v3)', 4.78, 23::bigint, null::text),
+       ('mladost-price-check', 'Expert Verified (v2)', 4.55, 11::bigint, null::text),
+       ('varna-coast-price-check', 'Expert Verified (v1)', 4.20, 5::bigint, null::text) $$,
+  'listing view shows badge and rating, no demo label');
 
 -- Anon cannot read private tables or write anywhere
 select throws_ok($$ select * from units $$, '42501', null, 'anon cannot read units');

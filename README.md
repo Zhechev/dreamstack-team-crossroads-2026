@@ -41,7 +41,7 @@ supabase db reset   # apply supabase/migrations, then supabase/seed.sql
 supabase test db    # pgTAP tests in supabase/tests
 ```
 
-The seed has three demo experts, all fictional and labelled "Demo expert, fictional". Each has one Expert Verified agent with three capabilities: price check 0.50, human review 20, consultation 50+. The anon key can read `experts`, `agents`, the authorised `agent_versions`, `capabilities`, `ratings`, `terms_versions` and the `marketplace_agents` view. Nobody writes with the anon key: writes go through Edge Functions using the service role.
+The seed has three fictional demo experts; for the MVP they carry no demo label in the product. Each has one Expert Verified agent with three capabilities: price check 0.50, human review 20, consultation 50+. The anon key can read `experts`, `agents`, the authorised `agent_versions`, `capabilities`, `ratings`, `terms_versions` and the `marketplace_agents` view. Nobody writes with the anon key: writes go through Edge Functions using the service role.
 
 **Schema ownership:** Claude Code owns the schema in `supabase/migrations`. Lovable must never create or alter tables; it only reads through the anon key and calls Edge Functions.
 

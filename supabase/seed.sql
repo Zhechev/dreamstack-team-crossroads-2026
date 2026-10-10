@@ -1,4 +1,5 @@
--- Demo marketplace (ticket 04). Every expert here is fictional and labelled as such.
+-- Demo marketplace (ticket 04). The experts are fictional; for the MVP they are not labelled in the product
+-- (decision 2026-10-10, ADR-014). The seeded order history is still flagged is_demo.
 -- Fixed ids so other tickets, tests and the connector can refer to them.
 -- Knowledge units are seeded separately (ticket 05).
 
@@ -10,15 +11,15 @@ insert into experts (id, slug, name, headline, city, bio, is_demo, demo_label) v
   ('11111111-0000-4000-8000-000000000001', 'elena-petrova', 'Elena Petrova',
    'Residential agent, Lozenets and Iztok', 'Sofia',
    'Twelve years selling flats in Lozenets. Shares her closed-deal prices from the last 90 days.',
-   true, 'Demo expert, fictional'),
+   false, null),
   ('11111111-0000-4000-8000-000000000002', 'georgi-ivanov', 'Georgi Ivanov',
    'Residential agent, Mladost and Studentski grad', 'Sofia',
    'New-build specialist for the east of Sofia; tracks off-plan and completed sales.',
-   true, 'Demo expert, fictional'),
+   false, null),
   ('11111111-0000-4000-8000-000000000003', 'maria-dimitrova', 'Maria Dimitrova',
    'Seaside property agent', 'Varna',
    'Holiday and year-round flats on the Varna coast, from Chaika to Asparuhovo.',
-   true, 'Demo expert, fictional');
+   false, null);
 
 insert into agents (id, expert_id, slug, name, description, vertical, area, payout_address) values
   ('22222222-0000-4000-8000-000000000001', '11111111-0000-4000-8000-000000000001',
