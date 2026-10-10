@@ -7,9 +7,9 @@
 
 **Blocked by:** 01 (Monorepo skeleton + protocol schemas), 04 (Supabase schema, RLS + seeded demo experts)
 
-**Status:** done locally (not deployed: no Node host account yet)
+**Status:** done — deployed to Render (`https://citable-connector.onrender.com`, see README)
 
-- [ ] Service skeleton deployed to the chosen Node host with one `.env`; per-agent config (sources, rules, prices, version, payout address) loaded from Supabase
+- [x] Service skeleton deployed to the chosen Node host with one `.env`; per-agent config (sources, rules, prices, version, payout address) loaded from Supabase
 - [x] Evaluate route for an agent returns a valid Evaluation (protocol schema) with an expiry
 - [x] Out-of-scope question (e.g. a car price) returns can_answer = false, no price
 - [x] No payment required on this route

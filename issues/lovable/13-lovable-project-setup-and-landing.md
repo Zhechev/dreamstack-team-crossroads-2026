@@ -7,13 +7,13 @@
 
 **Blocked by:** 01 (Monorepo skeleton + protocol schemas), 04 (Supabase schema, RLS + seeded demo experts)
 
-**Status:** ready-for-agent
+**Status:** done — checked on the live site (citable.lovable.app), 2026-10-10. Open: `CONNECTOR_URL` in the live config is still an old trycloudflare tunnel; set it to `https://citable-connector.onrender.com` (affects /setup and /approve)
 
 - [x] Q-11 decided: logo mark is the citation pill [✓] (ADR-018, Brand note); the Brand style prompt already includes it
 - [ ] Lovable project connected to GitHub (its own repo) and to our existing Supabase project
 - [ ] Project knowledge in Lovable says: use existing tables only, never create or alter tables or functions; secrets never in the frontend
-- [ ] Public config set: Supabase URL + anon key, connector service URL, Base Sepolia chain id, USDC address
-- [ ] Landing page live on the Lovable URL, mobile-first, iOS feel, Brand colours and type
+- [x] Public config set: Supabase URL + anon key, connector service URL, Base Sepolia chain id, USDC address
+- [x] Landing page live on the Lovable URL, mobile-first, iOS feel, Brand colours and type
 - [ ] Rule followed: nobody edits the Lovable repo by hand while someone is prompting Lovable
 
 ## How to build it in Lovable (prompts drafted 2026-10-10)
