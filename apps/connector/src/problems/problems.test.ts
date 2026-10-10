@@ -38,7 +38,12 @@ function memoryStore(): ProblemStore & { rows: Map<string, Problem> } {
       rows.get(id)!.gasSeedTx = tx;
     },
     async addPayment(id, p) {
-      rows.get(id)!.payments.push({ ...p, termsHash: TERMS, createdAt: new Date().toISOString() });
+      rows.get(id)!.payments.push({
+        ...p,
+        termsHash: TERMS,
+        order: { capability: "Price check", agent: "Lozenets Price Check", citationsVerified: true, citations: [{ unit_id: "unit-12", as_of: "2026-09-15" }] },
+        createdAt: new Date().toISOString(),
+      });
     },
     async markClosed(id, r) {
       Object.assign(rows.get(id)!, { status: "closed", ...r });
@@ -298,6 +303,31 @@ describe("close_problem", () => {
     expect(r.structuredContent.fee_note).toMatch(/waived/);
     expect((await getState(id)).status).toBe("closed");
     expect((await tool("close_problem", { problem_id: id })).isError).toBe(true);
+  });
+
+  it("gives the receipt page (ticket 17) what it shows, without the answer or quotes", async () => {
+    const id = (await tool("approve_budget", { cap: "2.00" })).structuredContent.problem_id;
+    await fund(id, await signFor(id, generatePrivateKey()));
+    await tool("ask", { agent_id: "lozenets-price-check", question: "Is 180k fair?" });
+    fake.balances.set(store.rows.get(id)!.walletAddress.toLowerCase(), 1_500_000n);
+    expect((await tool("close_problem", {})).structuredContent.receipt_url).toBe(`https://citable.lovable.app/receipt/${id}`);
+
+    const state = await getState(id);
+    expect(state).toMatchObject({ status: "closed", refund_tx: tx(4), refund_amount: "1.50", receipt_url: `https://citable.lovable.app/receipt/${id}` });
+    expect(state.payments).toEqual([
+      expect.objectContaining({
+        amount: "0.50",
+        capability: "Price check",
+        agent: "Lozenets Price Check",
+        terms_hash: TERMS,
+        citations_verified: true,
+        expert_share: "0.35",
+        fee: "0.15",
+        fee_waived: true,
+        citations: [{ source: "Elena Petrova: closed deals", source_url: null, as_of: "2026-09-15" }],
+      }),
+    ]);
+    expect(JSON.stringify(state)).not.toContain("182,000");
   });
 
   it("needs refund_to when the budget came in as a plain transfer", async () => {

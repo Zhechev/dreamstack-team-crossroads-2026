@@ -10,6 +10,8 @@ export interface Payment {
   orderId: string | null;
   /** Terms version the order was placed under (for the receipt). */
   termsHash: Hex | null;
+  /** What was bought, for the receipt; null when the order row is missing. */
+  order: { capability: string; agent: string; citationsVerified: boolean; citations: { unit_id: string; as_of: string }[] } | null;
   createdAt: string;
 }
 
@@ -46,7 +48,7 @@ export const usdc = (n: number | string) => Number(n).toFixed(6).replace(/(\.\d\
 
 const COLUMNS =
   "id, connector_link_id, wallet_address, wallet_key_enc, cap, status, buyer_address, funding_tx, gas_seed_tx, refund_tx, refund_amount, created_at, " +
-  "problem_payments(amount, tx_hash, order_id, created_at, orders(terms_hash))";
+  "problem_payments(amount, tx_hash, order_id, created_at, orders(terms_hash, citations, citations_verified, capabilities(name), agents(name)))";
 
 type Row = {
   id: string;
@@ -66,7 +68,13 @@ type Row = {
     tx_hash: Hex;
     order_id: string | null;
     created_at: string;
-    orders: { terms_hash: Hex } | null;
+    orders: {
+      terms_hash: Hex;
+      citations: { unit_id: string; as_of: string }[] | null;
+      citations_verified: boolean | null;
+      capabilities: { name: string } | null;
+      agents: { name: string } | null;
+    } | null;
   }[];
 };
 
@@ -89,6 +97,14 @@ const toProblem = (r: Row): Problem => ({
       txHash: p.tx_hash,
       orderId: p.order_id,
       termsHash: p.orders?.terms_hash ?? null,
+      order: p.orders
+        ? {
+            capability: p.orders.capabilities?.name ?? "",
+            agent: p.orders.agents?.name ?? "",
+            citationsVerified: p.orders.citations_verified === true,
+            citations: (p.orders.citations ?? []).map((c) => ({ unit_id: c.unit_id, as_of: c.as_of })),
+          }
+        : null,
       createdAt: p.created_at,
     }))
     .sort((a, b) => a.createdAt.localeCompare(b.createdAt)),
