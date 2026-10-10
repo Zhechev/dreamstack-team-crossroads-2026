@@ -1,33 +1,34 @@
 ---
 type: component
-updated: 2026-10-09
+updated: 2026-10-10
 owner: Mitko (data) · Kris (Lovable UI)
 ---
 # Marketplace
 
-> ⚠️ **Pre-pivot (KAT build) — re-plan pending, see [[Open Questions]] Q-14.** Current plan: [[Product]] · [[Demo Story]].
-
 > The Lovable web app and its Supabase backend. Decision: [[ADR-006 Marketplace on Lovable and Supabase]].
 
 ## Web app (Lovable)
-- **Landing:** headline, how it works, "Add Citable to Claude".
-- **Browse:** capabilities with price, rating, online status, citation badge.
-- **Onboarding (buyer):** connect MetaMask → grant spend permission → get private connector link (rotate / revoke).
-- **Seller view:** orders with status paid → running → completed / refunded; revenue; ratings. Never payloads.
+- **Landing:** headline, how it works (three tiers), "Add Citable to Claude".
+- **Browse:** expert agents with tiers and prices, Expert Verified (vN) badge, rating.
+- **Buyer setup:** get private connector link (rotate / revoke); demo wallet note.
+- **Expert console (mobile-first):**
+  - *Agent version* — sources, rules, test results, **Authorise** → [[Expert Agent Lifecycle]].
+  - *Review queue* — tier-2 tasks: read the automated answer, **Approve** or **Edit & approve**.
+  - *Orders* — status, revenue, ratings.
 - Style: [[Brand]].
 
 ## Supabase tables
-`sellers` · `seller_agents` (key, endpoint, last_heartbeat) · `capabilities` (name, tags, price model, price, cap, embedding) · `orders` (capability, buyer address, amount, tx hash, terms hash, status) · `ratings` · `disputes` · `connector_links` (token hash, buyer address, permission id) · `terms_versions`.
-RLS: public read on capabilities and sellers; all writes through Edge Functions.
+`experts` · `agents` · `agent_versions` (sources, rules, status, authorised_at) · `units` (source, as_of, text/record, embedding) · `test_cases` · `capabilities` (tier, price) · `orders` · `reviews` (order, status, final text) · `ratings` · `connector_links` · `terms_versions`.
+RLS: public read on agents and capabilities; writes through Edge Functions.
 
 ## Edge Functions
 | Function | Called by | Does |
 |---|---|---|
-| `register` | Stall | Signed manifest → upsert seller agent + capabilities |
-| `heartbeat` | Stall (every 60s) | Update `last_heartbeat` |
-| `search_capabilities` | Connector | Filter online + within budget, sort, return top 3 |
+| `search_agents` | Connector | Filter by need and budget, return top 3 |
+| `submit_review` | Expert console | Approve / edit a tier-2 answer |
+| `get_review` | Connector | Return review status or final answer |
+| `authorise_version` | Expert console | Mark version authorised → badge |
 | `rate` | Connector | Store rating signed by the paying key |
-| `dispute` | Connector | Run the [[Data Model#Judge\|judge]] → call `DreamEscrow.refund` |
 
 ## Ranking
-MVP: online capabilities within budget sorted by rating. Design (post-MVP): `score = bayes_rating × uptime_7d × (1 + 0.2·badge)`; featured placement always labelled, never mixed into score. → [[ADR-004 Capabilities, reputation and ranking]]
+MVP: verified agents within budget sorted by rating → [[ADR-004 Capabilities, reputation and ranking]].

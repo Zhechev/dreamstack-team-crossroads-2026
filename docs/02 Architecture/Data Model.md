@@ -1,37 +1,33 @@
 ---
 type: architecture
-updated: 2026-10-09
+updated: 2026-10-10
 owner: Mitko
 ---
 # Data Model
 
-> ⚠️ **Pre-pivot (KAT build) — re-plan pending, see [[Open Questions]] Q-14.** Current plan: [[Product]] · [[Demo Story]].
-
-> Entities, order lifecycle, protocol messages and the judge algorithm.
+> Entities, order lifecycle, protocol messages and the citation check.
 
 ## Entities
-Seller · SellerAgent · Capability · Quote · EscrowQuote · Order · SignedOutcome · Receipt · Rating · Dispute · TermsVersion · Provision · ConnectorLink
+Expert · Agent · AgentVersion · Unit · TestCase · Capability (tier) · Quote · Order · SignedOutcome · Review · Receipt · Rating · TermsVersion · ConnectorLink
 
 ## Order lifecycle
-`quoted → paid | deposited → running → delivered → confirmed | disputed → settled | refunded → rated`
+- Tier 1: `quoted → paid (verified) → running → checked → settled → rated` — failed check → not settled.
+- Tier 2: `quoted → paid → review_pending → approved | edited → delivered → rated`.
 
 ## Protocol messages (`packages/protocol`, zod)
-- **Manifest:** seller agent id, key, endpoint, capabilities[{id, name, tags, price_model, price, cap}], terms_hash.
-- **EscrowQuote:** order_id, capability_id, cap, seller, escrow_address, terms_hash, expires_at.
-- **SignedOutcome:** order_id, text (with placeholders), citations[{provision_id, quote}], created_at, signature.
+- **Manifest:** agent id, version, key, capabilities[{id, tier, name, tags, price}], terms_hash.
+- **SignedOutcome:** order_id, text (with placeholders), citations[{unit_id, quote, as_of}], agent_version, created_at, signature.
+- **Review:** order_id, status, reviewer, final_text, reviewed_at.
 - **Receipt:** order_id, tx_hash, amount, fee, terms_hash.
 
-## Provisions (corpus)
-`provisions(id, act, article, paragraph, item, text, source_url, version_date, embedding vector(1536))` — FTS with `simple` config + `pg_trgm`, pgvector cosine.
+## Units (knowledge)
+`units(id, agent_id, layer: base|expert, source, source_url, as_of, kind: passage|record, text, data jsonb, embedding vector(1536))` — FTS + `pg_trgm` + pgvector cosine. Demo: synthetic Lozenets deal records (labelled) + public base sources.
 
-## Judge
-1. Verify the outcome signature matches the seller agent and order.
-2. For every citation: `provision_id` exists and the normalised quote is contained in the provision text.
-3. Any failure → ruling *refund*: call `DreamEscrow.refund(orderId)`, record a negative reputation event.
-4. Optional LLM check "does the source support the claim?" is advisory only and cannot move money.
+## Citation check
+1. Verify the outcome signature matches the agent, version and order.
+2. For every citation: `unit_id` exists, belongs to the agent, the normalised quote is contained in the unit, and `as_of` matches.
+3. Any failure → don't settle (tier 1, proposed) and record a negative reputation event → [[ADR-009 Deterministic citation judge]].
+4. Optional LLM "does the source support the claim?" is advisory only.
 
 ## Marketplace rules
-- Reputation is per capability; only paying keys rate.
-- Uptime counts toward reputation.
-- Escrow timeout releases to the seller.
-- Chaining (post-MVP): budgets flow downhill, depth ≤ 3, no buying from your own buyer.
+Reputation is per capability; only paying keys rate. Only authorised versions are listed.

@@ -2,7 +2,7 @@
 type: adr
 id: ADR-005
 status: Accepted
-updated: 2026-10-09
+updated: 2026-10-10
 ---
 # ADR-005 Build tools, language and repo
 
@@ -10,10 +10,10 @@ updated: 2026-10-09
 Sponsors require Lovable and Claude Code; the official x402 and MCP SDKs are TypeScript; the team is strongest in Laravel but Claude Code writes most code.
 
 ## Decision
-Build the web app with **Lovable** and everything else with **Claude Code**, in **TypeScript** (Node 22, pnpm monorepo), Solidity with **Foundry**. Public repo, **MIT**, runs with your own API keys.
+Build the web app with **Lovable** and everything else with **Claude Code**, in **TypeScript** (Node 22, pnpm monorepo), Solidity with **Foundry** only if escrow survives. Public repo, **MIT**, runs with your own API keys.
 
 ## Consequences
-One language end to end; Laravel skills used for review. README must cover keys, faucets, Claude connector setup and corpus seeding.
+One language end to end; Laravel skills used for review. README must cover keys, faucets, Claude connector setup and knowledge seeding. The planning vault lives in `docs/`.
 
 ## Rejected
 Laravel backend; mixed-language repo.

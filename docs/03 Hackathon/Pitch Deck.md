@@ -1,18 +1,16 @@
 ---
 type: plan
-updated: 2026-10-09
+updated: 2026-10-10
 ---
 # Pitch Deck — 8 slides, 3 minutes
 
-> ⚠️ **Pre-pivot (KAT build) — re-plan pending, see [[Open Questions]] Q-14.** Current plan: [[Product]] · [[Demo Story]].
+> Content for the PDF and the stage pitch. Style: [[Brand]]. Claims: [[ADR-014 Promises and claims]]. Headline pending [[Open Questions]] Q-4.
 
-> Content for the PDF and the stage pitch. Style: [[Brand]].
-
-1. **Citable** — *Every answer cited. Every draft guaranteed.* Hook: Maria, KAT, 14 days.
-2. **Problem** — assistants can't buy expert work; nobody stands behind AI answers; experts can't sell know-how without giving it away.
-3. **Solution** — Discover → Pay → Execute → Verify; Claude hires expert agents over HTTP 402.
-4. **Demo** — the 2-minute video (or three stills: pay, cited draft, refund).
-5. **Trust** — machine-checked citations, escrow, automatic refund; expert keeps the corpus.
-6. **Business** — 2% on settled orders; staged pricing; escalation to the human expert.
-7. **Who can use it** — Today: Claude, every plan, MetaMask top-up by card. Next: email wallet, ChatGPT, real lawyers. Vision: the marketplace for machine labor.
+1. **Citable** — headline. Hook: €180k for a 2-bed in Lozenets — fair or not?
+2. **Problem** — AI doesn't know what happened this week; nobody stands behind its answers; experts can't sell know-how to AI users because building an agent is too much work.
+3. **Solution** — we build the agent, the expert approves it. Three tiers: ~0.50 automated answer → ~20 human review → 50+ consultation. *AI That Does the Work* — the expert enters only when it matters.
+4. **Demo** — the 2-minute video (or stills: Expert Verified, cited price check, review approved on phone).
+5. **Why it's different** — "ChatGPT knows asking prices. Our agents know what actually sold last month." Every figure with source and date; Expert Verified per version; a human on call.
+6. **Business** — take rate on all three tiers; experts earn real money (reviews, consultations) and qualified leads; first 5 experts hand-onboarded at 0% fee.
+7. **Who can use it** — Today: Claude, testnet USDC. Next: top up by card, paid out in euros, crypto underneath; renovation quotes, used cars. Vision: any expert, any field, from the assistant you already use.
 8. **Team & build** — Kris Georgiev, Mitko Zhechev · built with Lovable + Claude Code · open source (repo URL).

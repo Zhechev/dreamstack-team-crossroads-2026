@@ -10,7 +10,7 @@ updated: 2026-10-10
 - **What:** your AI assistant hires expert-verified agents and pays per task; the human expert steps in only when it matters. We build the agent, the expert approves it. → [[Product]]
 - **Theme fit:** *AI That Does the Work* — three tiers: ~0.50 automated answer · ~20 human review · 50+ consultation. → [[ADR-019 Three-tier expert funnel]]
 - **Demo:** "Is €180k fair for a 2-bed in Lozenets?" — cited price check, the agent reviews it on her phone, viewing booked. → [[Demo Story]]
-- **Stack:** Lovable + Supabase marketplace · hosted Stall agents (TypeScript, x402) · hosted MCP connector in Claude · USDC on Base Sepolia; crypto hidden at the edges in the pitch. → [[Tech Stack]] *(pre-pivot)*
+- **Stack:** Lovable + Supabase marketplace · hosted Stall agents (TypeScript, x402) · hosted MCP connector in Claude · USDC on Base Sepolia; crypto hidden at the edges in the pitch. → [[Tech Stack]]
 - **Deadline:** submit 8-slide PDF + 2-min MP4 + public GitHub URL by **Sun 11 Oct 14:00**. → [[Hackathon Brief]]
 
 ## Map
@@ -18,7 +18,7 @@ updated: 2026-10-10
 |---|---|
 | Root | [[Home]] · [[Glossary]] · [[System Map.canvas\|System Map]] |
 | 01 Product | [[Product]] · [[Demo Story]] · [[Business Model]] · [[Trust & Legal]] · [[Brand]] |
-| 02 Architecture | [[Tech Stack]] · [[System Overview]] · [[Marketplace]] · [[Stall]] · [[Buyer Connector]] · [[Payments & Escrow]] · [[Data Model]] |
+| 02 Architecture | [[Expert Agent Lifecycle]] · [[Tech Stack]] · [[System Overview]] · [[Marketplace]] · [[Stall]] · [[Buyer Connector]] · [[Payments & Escrow]] · [[Data Model]] |
 | 03 Hackathon | [[Hackathon Brief]] · [[MVP Scope]] · [[Build Board]] · [[Build Schedule]] · [[Demo Video Script]] · [[Pitch Deck]] · [[Team]] |
 | 04 Decisions | [[ADR Index]] — one record per decision |
 | 05 Operations | [[Open Questions]] · [[Change Log]] |
@@ -32,4 +32,4 @@ updated: 2026-10-10
 5. **Tasks** live only on the [[Build Board]].
 
 ## Now
-- **Sat 10 Oct:** pivot locked (see [[Change Log]]). Next: re-plan scope, board and schedule → [[Open Questions]] Q-3.
+- **Sat 10 Oct:** pivot locked and the whole vault rewritten (see [[Change Log]]). Scope, board and schedule are *proposed* — confirm → [[Open Questions]] Q-3. First task: T-10 x402 spike, go/no-go 14:00.

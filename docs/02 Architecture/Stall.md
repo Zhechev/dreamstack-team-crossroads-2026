@@ -1,25 +1,23 @@
 ---
 type: component
-updated: 2026-10-09
+updated: 2026-10-10
 owner: Mitko
 ---
-# Stall — seller agent
+# Stall — hosted expert agent runtime
 
-> ⚠️ **Pre-pivot (KAT build) — re-plan pending, see [[Open Questions]] Q-14.** Current plan: [[Product]] · [[Demo Story]].
-
-> The service an expert runs on their own machine to sell capabilities. Decision: [[ADR-007 Stall seller agent]].
+> The service Citable hosts to run every expert agent. Decision: [[ADR-007 Stall seller agent]]. Build flow: [[Expert Agent Lifecycle]].
 
 ## Parts
-- **Hono server** with the official x402 middleware; one route per capability.
-- **Capabilities (demo):** `POST /assess-case` — 0.50 USDC fixed, x402 `exact`. `POST /draft-appeal` — cap 5.00, answers with an escrow quote, works only after the `Deposited` event for that orderId.
-- **Retrieval:** hybrid search over the local `provisions` table → [[ADR-008 Cited sources with as-of dates]].
-- **Generation:** Claude via Anthropic SDK; prompt allows claims only from retrieved provisions; output JSON with `citations[{provision_id, quote}]` and identity placeholders.
-- **Signing:** outcomes signed with the seller agent key.
-- **Registry client:** `register` on start, `heartbeat` every 60s.
-- **Config:** one `.env` (keys, prices, Supabase URL, RPC URL, LLM provider).
-
-## Corpus (demo)
-Public texts only: ZDvP, APK, Insurance Code (mandatory civil liability), 5–10 public court decisions on KAT coercive measures. Split by article/paragraph/item, embedded, seeded by `corpus/` scripts.
+- **Hono server** with the official x402 middleware; one config per expert agent (sources, rules, prices, version, payout address).
+- **Capabilities (demo):**
+  - `POST /price-check` — tier 1, **0.50 USDC**, x402 `exact`; instant cited answer.
+  - `POST /human-review` — tier 2, **20 USDC**, x402 `exact`; creates a review task for the expert, answer returned later.
+  - Tier 3 consultation — shown on the marketplace, not built.
+- **Retrieval:** hybrid search over `units` (base + expert layer) → [[ADR-008 Cited sources with as-of dates]].
+- **Generation:** Claude via Anthropic SDK; claims only from retrieved units; expert rules in the prompt; output JSON with `citations[{unit_id, quote, as_of}]` and identity placeholders.
+- **Citation check:** every citation verified against its unit before the payment settles (proposed, Q-6).
+- **Signing:** outcomes signed with the agent's key.
+- **Config:** one `.env` (keys, Supabase URL, RPC URL, LLM provider).
 
 ## Privacy
-Corpus never leaves the machine; only retrieved snippets go to the model. The seller never receives buyer identity.
+The knowledge base never leaves Citable; only answers do. The expert never receives buyer identity. A self-hosted Stall for experts who keep private data on their own server is a later tier.

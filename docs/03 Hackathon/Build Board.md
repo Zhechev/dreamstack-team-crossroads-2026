@@ -1,35 +1,32 @@
 ---
 type: tasks
-updated: 2026-10-09
+updated: 2026-10-10
 ---
 # Build Board
 
-> ⚠️ **Pre-pivot (KAT build) — re-plan pending, see [[Open Questions]] Q-3.** Current plan: [[Product]] · [[Demo Story]].
-
-> Every task, owner and estimate. Time slots: [[Build Schedule]]. Scope: [[MVP Scope]].
+> Every task, owner and estimate. Time slots: [[Build Schedule]]. Scope: [[MVP Scope]]. **Proposed — confirm in [[Open Questions]] Q-3.**
 
 | ID | Task | Tool | Owner | Est. h | Status |
 |---|---|---|---|---|---|
-| T-01 | Monorepo skeleton (pnpm), MIT, `.env.example`, README stub, CI | Claude Code | Kris | 1 | todo |
-| T-02 | `packages/protocol` zod schemas | Claude Code | Mitko | 1.5 | todo |
-| T-03 | DreamEscrow.sol + Foundry tests + deploy Base Sepolia | Claude Code | Kris | 3 | todo |
-| T-04 | Supabase schema, RLS, Edge Functions (register, heartbeat, search, rate, dispute→judge) | Claude Code | Mitko | 4 | todo |
-| T-05 | Lovable app: landing, browse, seller order view | Lovable | Kris | 3 | todo |
-| T-06 | Corpus: collect texts, split into provisions, embed, seed | Claude Code | Mitko | 4 | todo |
-| T-07 | Stall: Hono + x402, *Assess case*, *Draft appeal* escrow quote, retrieval, signed outcomes | Claude Code | Mitko | 6 | todo |
-| T-08 | Hosted connector: 5 tools, private link auth, deploy, add to Claude | Claude Code | Kris | 5 | todo |
-| T-09 | End-to-end run incl. refund; record 2-min MP4 by Sun 12:30 | — | Both | 3 each | todo |
-| T-10 | Terms v1 text + hash | — | Mitko | 1 | todo |
-| T-11 | 8-slide PDF + pitch rehearsal | — | Kris | 3 | todo |
-| T-12 | **Spike:** spend permission on Base Sepolia → x402 + escrow deposit | Claude Code | Kris | 2 | todo |
-| T-13 | Lovable onboarding page: connect wallet, grant permission, issue link | Lovable | Kris | 2 | todo |
-| T-14 | Fund 3 demo buyer wallets (faucet USDC + Base Sepolia ETH) | — | Kris | 0.5 | todo |
-| T-15 | Check domain + GitHub org; create public repo | — | Kris | 0.5 | todo |
+| T-01 | Monorepo skeleton (pnpm) next to `docs/`, MIT, `.env.example`, README | Claude Code | Kris | 1 | in progress (repo + docs pushed) |
+| T-02 | `packages/protocol` zod schemas (manifest, quote, signed outcome, review, receipt) | Claude Code | Mitko | 1 | todo |
+| T-03 | Supabase schema, RLS, Edge Functions (search, rate, review queue, authorise) | Claude Code | Mitko | 3 | todo |
+| T-04 | Knowledge pipeline: ingest units with source + as-of, embed, hybrid search | Claude Code | Mitko | 3 | todo |
+| T-05 | Demo data: synthetic Lozenets deals (labelled), public base layer, expert rules, ~10 test questions | Claude Code | Mitko | 2 | todo |
+| T-06 | Hosted Stall: `/price-check`, `/human-review`, citation check before settle, signed outcomes | Claude Code | Mitko | 5 | todo |
+| T-07 | Eval runner + authorise version → Expert Verified badge | Claude Code | Mitko | 2 | todo |
+| T-08 | Connector: 6 tools, private link auth, deploy, add to Claude | Claude Code | Kris | 4 | todo |
+| T-09 | Lovable: landing, browse, buyer setup, expert console (version screen, review queue, orders) | Lovable | Kris | 4 | todo |
+| T-10 | **Spike:** x402 settle-after-check on Base Sepolia + demo wallet | Claude Code | Kris | 2 | todo |
+| T-11 | Fund demo wallets (~25 USDC each = two faucet rounds) | — | Kris | 0.5 | todo |
+| T-12 | Terms v1 text + hash | — | Mitko | 1 | todo |
+| T-13 | End-to-end run: tier 1 + tier 2 from Claude | — | Both | 3 each | todo |
+| T-14 | Record 2-min MP4 by Sun 12:30 | — | Both | 1.5 each | todo |
+| T-15 | 8-slide PDF + pitch rehearsal | — | Kris | 3 | todo |
 
-## Capacity
+## Capacity (from Sat 12:00)
 | | Kris | Mitko |
 |---|---|---|
-| Sat–Sun tasks | 21h | 17.5h |
-| Capacity (minus sleep, meals, panel) | ~20h | ~20h |
-| After ~25% integration buffer | ~1h over | ~2.5h spare |
-Accepted risk: rely on the Sun 09:00 cut-off; Mitko takes loose ends with his spare time.
+| Tasks | 19h | 22.5h |
+| Capacity (minus sleep, meals) | ~18h | ~18h |
+Over by ~1h (Kris) and ~4.5h (Mitko) → apply the [[MVP Scope]] cut order at Sun 09:00; Kris takes T-05 data prep if free.

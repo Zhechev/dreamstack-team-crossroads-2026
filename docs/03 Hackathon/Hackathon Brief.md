@@ -1,6 +1,6 @@
 ---
 type: reference
-updated: 2026-10-09
+updated: 2026-10-10
 ---
 # Hackathon Brief — Crossroads AI Hackathon 2026
 
@@ -29,11 +29,9 @@ Top 5 → mentoring + Crossroads Pitch Competition (29 Oct) → San Francisco pi
 **AI That Does the Work** (announced Fri 21:00). Fit: the AI does the volume — cited price checks — and brings in the human expert only when it matters ([[ADR-019 Three-tier expert funnel]]).
 
 ## Judging
-> "Our proof" below is pre-pivot; refresh after [[Open Questions]] Q-3.
-
 | Official criterion | Website asks | Discord adds | Our proof |
 |---|---|---|---|
-| **Working prototype** | Functional, end to end? | — | Testnet flow: pay → cited answer → escrowed draft → refund; repo runs from README |
-| **Use of AI** | Thoughtful, effective AI? | Technical implementation; innovation & creativity | Claude drafts only from retrieved law; citations machine-checked; Claude is the buyer agent via MCP; agents hiring agents over HTTP 402 |
-| **Problem and impact** | Clear problem, who it helps? | Impact & scalability | Any Claude user (free plan too); any expert can publish; any field of expertise |
+| **Working prototype** | Functional, end to end? | — | Testnet flow from Claude: pay 0.50 → cited price check → pay 20 → expert approves on phone → reviewed answer; repo runs from README |
+| **Use of AI** | Thoughtful, effective AI? | Technical implementation; innovation & creativity | Claude answers only from retrieved, dated units under expert rules; citations machine-checked before payment settles; Claude is the buyer agent via MCP, paying over HTTP 402 |
+| **Problem and impact** | Clear problem, who it helps? | Impact & scalability | Any Claude user; any expert sells without building anything; any field (real estate first, then renovation, cars) |
 | **Execution and demo** | Works well, presented clearly? | Presentation | One story, one headline, rehearsed 3-min pitch |

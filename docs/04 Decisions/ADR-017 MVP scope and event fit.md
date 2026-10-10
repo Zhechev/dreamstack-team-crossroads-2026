@@ -6,7 +6,7 @@ updated: 2026-10-10
 ---
 # ADR-017 MVP scope and event fit
 
-> **Under review (2026-10-10):** [[MVP Scope]], [[Build Board]] and [[Build Schedule]] describe the pre-pivot KAT build and must be re-planned ([[Open Questions]]). The format rules below still hold.
+> **Under review (2026-10-10):** [[MVP Scope]], [[Build Board]] and [[Build Schedule]] were re-planned for the new plan and are *proposed* until confirmed ([[Open Questions]] Q-3). The format rules below still hold.
 
 ## Context
 ~29 build hours, two people; judges see a 2-minute video, 8 slides and a public repo.

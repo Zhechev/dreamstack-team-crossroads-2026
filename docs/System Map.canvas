@@ -11,13 +11,13 @@
    "color": "2"
   },
   {
-   "id": "maria",
+   "id": "buyer",
    "type": "text",
    "x": 30,
    "y": 40,
    "width": 260,
    "height": 70,
-   "text": "**Maria**\ntells Claude her case"
+   "text": "**Buyer**\n\"Is \u20ac180k fair for a 2-bed in Lozenets?\""
   },
   {
    "id": "claude",
@@ -29,13 +29,13 @@
    "text": "**Claude**\nany plan, incl. free"
   },
   {
-   "id": "mm",
+   "id": "wallet",
    "type": "text",
    "x": 30,
    "y": 270,
    "width": 260,
    "height": 80,
-   "text": "**MetaMask**\nUSDC + daily spend permission"
+   "text": "**Wallet**\ndemo wallet (hackathon) \u00b7 card top-up (next)"
   },
   {
    "id": "gc",
@@ -66,68 +66,86 @@
    "file": "docs/02 Architecture/Marketplace.md"
   },
   {
+   "id": "stall",
+   "type": "file",
+   "x": 430,
+   "y": 150,
+   "width": 260,
+   "height": 60,
+   "file": "docs/02 Architecture/Stall.md"
+  },
+  {
    "id": "supa",
    "type": "text",
    "x": 730,
    "y": 150,
    "width": 260,
    "height": 70,
-   "text": "**Supabase**\nregistry \u00b7 orders \u00b7 ratings \u00b7 links"
+   "text": "**Supabase**\nagents \u00b7 versions \u00b7 orders \u00b7 reviews \u00b7 ratings"
   },
   {
-   "id": "judge",
+   "id": "units",
+   "type": "text",
+   "x": 430,
+   "y": 270,
+   "width": 260,
+   "height": 70,
+   "text": "**Knowledge**\nbase + expert units \u00b7 source + as-of"
+  },
+  {
+   "id": "llm",
    "type": "text",
    "x": 730,
    "y": 270,
    "width": 260,
    "height": 70,
-   "text": "**Judge** (Edge Function)\ncitation check \u2192 refund"
+   "text": "**Claude API**\nanswers from retrieved units + expert rules"
   },
   {
-   "id": "web",
+   "id": "check",
    "type": "text",
    "x": 430,
-   "y": 150,
+   "y": 390,
    "width": 260,
    "height": 70,
-   "text": "**Lovable app**\nbrowse \u00b7 onboarding \u00b7 seller view"
+   "text": "**Citation check**\nbefore payment settles"
   },
   {
-   "id": "gs",
+   "id": "life",
+   "type": "file",
+   "x": 730,
+   "y": 390,
+   "width": 260,
+   "height": 60,
+   "file": "docs/02 Architecture/Expert Agent Lifecycle.md"
+  },
+  {
+   "id": "ge",
    "type": "group",
    "x": 1100,
    "y": 0,
    "width": 340,
    "height": 520,
-   "label": "SELLER MACHINE",
+   "label": "EXPERT",
    "color": "4"
   },
   {
-   "id": "stall",
-   "type": "file",
+   "id": "expert",
+   "type": "text",
    "x": 1130,
    "y": 40,
    "width": 280,
-   "height": 60,
-   "file": "docs/02 Architecture/Stall.md"
+   "height": 70,
+   "text": "**Expert** (real-estate agent)\nauthority + fresh deal prices"
   },
   {
-   "id": "corp",
+   "id": "console",
    "type": "text",
    "x": 1130,
    "y": 150,
    "width": 280,
-   "height": 70,
-   "text": "**Corpus**\nprovisions \u00b7 FTS + pgvector"
-  },
-  {
-   "id": "llm",
-   "type": "text",
-   "x": 1130,
-   "y": 270,
-   "width": 280,
-   "height": 70,
-   "text": "**Claude API**\ndrafts from retrieved law"
+   "height": 90,
+   "text": "**Expert console** (phone)\nauthorise version \u00b7 review queue \u00b7 orders"
   },
   {
    "id": "gch",
@@ -135,7 +153,7 @@
    "x": 400,
    "y": 600,
    "width": 1040,
-   "height": 220,
+   "height": 200,
    "label": "BASE SEPOLIA",
    "color": "6"
   },
@@ -149,28 +167,19 @@
    "file": "docs/02 Architecture/Payments & Escrow.md"
   },
   {
-   "id": "esc",
+   "id": "fac",
    "type": "text",
    "x": 730,
    "y": 640,
    "width": 300,
    "height": 80,
-   "text": "**DreamEscrow**\ndeposit \u00b7 release 2% \u00b7 refund"
-  },
-  {
-   "id": "fac",
-   "type": "text",
-   "x": 1100,
-   "y": 640,
-   "width": 300,
-   "height": 80,
-   "text": "**x402.org facilitator**\nverify + settle"
+   "text": "**x402.org facilitator**\nverify + settle USDC"
   }
  ],
  "edges": [
   {
    "id": "e0",
-   "fromNode": "maria",
+   "fromNode": "buyer",
    "toNode": "claude"
   },
   {
@@ -183,62 +192,59 @@
    "id": "e2",
    "fromNode": "conn",
    "toNode": "supa",
-   "label": "search / rate / dispute"
+   "label": "search / review / rate"
   },
   {
    "id": "e3",
    "fromNode": "conn",
    "toNode": "stall",
-   "label": "request \u2192 402 \u2192 pay \u2192 outcome",
+   "label": "request \u2192 402 \u2192 pay \u2192 answer",
    "color": "2"
   },
   {
    "id": "e4",
-   "fromNode": "mm",
+   "fromNode": "wallet",
    "toNode": "fac",
-   "label": "x402 under permission",
+   "label": "x402 payment",
    "color": "2"
   },
   {
    "id": "e5",
-   "fromNode": "mm",
-   "toNode": "esc",
-   "label": "deposit (drafts)",
-   "color": "2"
+   "fromNode": "stall",
+   "toNode": "units"
   },
   {
    "id": "e6",
-   "fromNode": "stall",
-   "toNode": "supa",
-   "label": "register + heartbeat"
+   "fromNode": "units",
+   "toNode": "llm"
   },
   {
    "id": "e7",
    "fromNode": "stall",
-   "toNode": "corp"
+   "toNode": "check"
   },
   {
    "id": "e8",
-   "fromNode": "corp",
-   "toNode": "llm"
-  },
-  {
-   "id": "e9",
-   "fromNode": "judge",
-   "toNode": "esc",
-   "label": "refund",
+   "fromNode": "check",
+   "toNode": "fac",
+   "label": "settle only if valid",
    "color": "1"
   },
   {
+   "id": "e9",
+   "fromNode": "expert",
+   "toNode": "console"
+  },
+  {
    "id": "e10",
-   "fromNode": "web",
-   "toNode": "supa"
+   "fromNode": "console",
+   "toNode": "mkt",
+   "label": "authorise \u00b7 approve review"
   },
   {
    "id": "e11",
-   "fromNode": "web",
-   "toNode": "mm",
-   "label": "grant permission"
+   "fromNode": "mkt",
+   "toNode": "supa"
   }
  ]
 }
