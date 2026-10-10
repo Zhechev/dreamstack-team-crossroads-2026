@@ -7,10 +7,12 @@
 
 **Blocked by:** 01 (Monorepo skeleton + protocol schemas)
 
-**Status:** ready-for-agent
+**Status:** done
 
-- [ ] Migrations for experts, agents, agent_versions, units, test_cases, capabilities, orders, reviews, ratings, connector_links (token stored hashed), terms_versions
-- [ ] RLS: public read on experts, agents, agent_versions, capabilities, ratings; no anon writes anywhere; writes only through Edge Functions or the service role
-- [ ] Seed: demo experts labelled "Demo expert, fictional", agents with an authorised version shown as Expert Verified (vN), ratings, and each agent's payout address
-- [ ] `supabase db reset` locally reproduces the whole thing
-- [ ] Claude Code owns the schema: a note in the README says Lovable must never create or alter tables
+- [x] Migrations for experts, agents, agent_versions, units, test_cases, capabilities, orders, reviews, ratings, connector_links (token stored hashed), terms_versions
+- [x] RLS: public read on experts, agents, agent_versions, capabilities, ratings; no anon writes anywhere; writes only through Edge Functions or the service role
+- [x] Seed: demo experts labelled "Demo expert, fictional", agents with an authorised version shown as Expert Verified (vN), ratings, and each agent's payout address
+- [x] `supabase db reset` locally reproduces the whole thing
+- [x] Claude Code owns the schema: a note in the README says Lovable must never create or alter tables
+
+**Notes:** Payout addresses in the seed are placeholders (`0x…de001`–`de003`); ticket 08 replaces the Lozenets one with the real demo payout wallet. `units` exists here with no data and no public read; ticket 05 seeds it and adds search. Seeded ratings come from orders flagged `is_demo` (no payment happened).
