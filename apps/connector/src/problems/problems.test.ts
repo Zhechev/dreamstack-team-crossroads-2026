@@ -328,3 +328,52 @@ describe("x402 payer", () => {
     expect(calls).toBe(1);
   });
 });
+
+describe("top up once (ADR-011): one budget per buyer, reused", () => {
+  it("approve_budget returns the open budget instead of opening a second one", async () => {
+    const first = (await tool("approve_budget", { cap: "5.00" })).structuredContent;
+    const again = (await tool("approve_budget", { cap: "2.00" })).structuredContent;
+    expect(again).toMatchObject({ problem_id: first.problem_id, existing: true, cap: "5.00" });
+    expect(store.rows.size).toBe(1);
+  });
+
+  it("tells Claude to use ask when a funded budget is already there", async () => {
+    const id = (await tool("approve_budget", { cap: "5.00" })).structuredContent.problem_id;
+    await fund(id, await signFor(id, generatePrivateKey()));
+    const r = (await tool("approve_budget", { cap: "2.00" })).structuredContent;
+    expect(r).toMatchObject({ problem_id: id, existing: true, funded: true, remaining: "5.00" });
+    expect(r.next).toMatch(/use ask/);
+  });
+
+  it("pays several questions from the same top-up", async () => {
+    const id = (await tool("approve_budget", { cap: "5.00" })).structuredContent.problem_id;
+    await fund(id, await signFor(id, generatePrivateKey()));
+    expect((await tool("ask", { agent_id: "a", question: "q1" })).structuredContent.remaining).toBe("4.50");
+    payer.next = { ok: true, outcome: outcome(randomUUID()), amount: 500_000n, txHash: tx(5) };
+    expect((await tool("ask", { agent_id: "a", question: "q2" })).structuredContent.remaining).toBe("4.00");
+    expect(payer.calls.map((c) => c.remaining)).toEqual([5_000_000n, 4_500_000n]);
+  });
+
+  it("lets the setup page open the budget with the buyer's connector token", async () => {
+    const open = (headers: Record<string, string>) =>
+      app.request("/problems", { method: "POST", headers: { "content-type": "application/json", ...headers }, body: JSON.stringify({ cap: "5.00" }) });
+    expect((await open({})).status).toBe(401);
+    expect((await open({ "x-connector-token": "ctb_" + "z".repeat(43) })).status).toBe(401);
+    const res = await open({ "x-connector-token": LINK.token });
+    expect(res.status).toBe(200);
+    const body = (await res.json()) as any;
+    expect(body).toMatchObject({ cap: "5.00", existing: false, funded: false });
+    expect(body.authorization.message.value).toBe("5000000");
+    // Claude sees the same budget.
+    expect((await tool("budget_status", {})).structuredContent.problem_id).toBe(body.problem_id);
+    expect(((await (await open({ "x-connector-token": LINK.token })).json()) as any).existing).toBe(true);
+  });
+
+  it("allows the token header in CORS preflight from the Lovable app", async () => {
+    const res = await app.request("/problems", {
+      method: "OPTIONS",
+      headers: { origin: "https://citable.lovable.app", "access-control-request-method": "POST", "access-control-request-headers": "content-type,x-connector-token" },
+    });
+    expect(res.headers.get("access-control-allow-headers")?.toLowerCase()).toContain("x-connector-token");
+  });
+});

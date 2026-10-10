@@ -1,7 +1,9 @@
-# 15: Budget approval page (MetaMask)
+# 15: Budget top-up page (MetaMask)
 
 **Owner:** Kris · **Built with:** Lovable · **Runs on:** Lovable app + MetaMask (Base Sepolia) + connector problem-state endpoint
 **Build Board:** T-08 (part, build first)
+
+**Changed 2026-10-10 (ADR-011, top up once):** this page is now the **top-up** page — used by the setup page (ticket 16) for the first top-up and by Claude's `approve_budget` link when the budget runs low. The page itself is unchanged.
 
 **What to build:** The link Claude gives the buyer opens this page. The buyer connects MetaMask on Base Sepolia, sees the cap (e.g. 2.00 USDC) and the problem wallet, **signs one gasless USDC authorisation** (no ETH needed; the connector submits it), and then watches a live list of the agent's automatic payments.
 

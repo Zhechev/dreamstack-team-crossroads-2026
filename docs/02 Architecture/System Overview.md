@@ -13,10 +13,10 @@ updated: 2026-10-10
 | Citable cloud | Lovable app · Supabase · one hosted service: [[Buyer Connector]] (`/mcp`) + [[Stall]] expert agent routes (`/agents/:id/...`) · knowledge index | Expert sources and rules, order metadata, ratings — never buyer funds or identity |
 | Base Sepolia | USDC · x402.org facilitator | Settlement only |
 
-## Order flow — MVP (question → evaluation → approval → automatic payment → response)
+## Order flow — MVP (question → evaluation → automatic payment from the budget → response)
 1. **Question:** Claude → connector `find_expert` → Supabase → top 3 agents.
 2. **Evaluation:** `evaluate` → `/agents/:id/evaluate` (free): can answer, what it delivers, price.
-3. **Approval (once per problem):** `approve_budget(cap)` → problem wallet + link → buyer sends the cap from MetaMask.
+3. **Budget (topped up once, at setup):** the buyer signs one gasless top-up into their budget wallet; `budget_status` confirms it covers the price. Only when it runs low: `approve_budget` → top-up link.
 4. **Automatic payment:** `ask` → `/agents/:id/price-check` answers **402** → connector pays x402 from the problem wallet, no prompt.
 5. The agent route retrieves units, applies expert rules, Claude (API) writes the answer with citations; citation check passes → payment settles via the facilitator; answer + tx hash stored on the order.
 6. **Response:** cited answer in the chat; `close_problem` returns the remainder.

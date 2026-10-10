@@ -7,12 +7,12 @@ owner: Kris
 
 > How money moves. Decisions: [[ADR-001 Payments with x402 and USDC on Base]] · [[ADR-011 Buyer wallet and spend permission]] · [[ADR-020 Crypto hidden at the edges]] · [[ADR-013 Escrow for drafts]] (deferred).
 
-## MVP payment flow — one approval per problem, hard cap, then automatic
-1. After the free evaluation, Claude calls `approve_budget(cap)` → connector creates a **problem wallet** on Base Sepolia → returns a link.
-2. Buyer opens the marketplace page → MetaMask → **one** signature: an EIP-3009 `transferWithAuthorization` of the cap (e.g. 2.00 USDC) to the problem wallet. The connector submits it and pays the gas — the buyer needs no ETH.
-3. From then on the connector pays every x402 call (`exact`, gasless USDC authorisation) from the problem wallet — no prompts. It can never spend more than the cap.
-4. Stall answers, runs the citation check, settles via the facilitator only if it passes.
-5. `close_problem` → remainder returned to the buyer's MetaMask; receipt lists every payment with tx hashes.
+## MVP payment flow — top up once, then automatic (ADR-011)
+1. **Setup (once):** on the Citable setup page the buyer connects MetaMask, gets their Claude link and tops up a budget (e.g. 5 USDC): the connector opens a **budget wallet** (`POST /problems` with the connector token) and the buyer signs **one** EIP-3009 `transferWithAuthorization` of that amount. The connector submits it and pays the gas — the buyer needs no ETH.
+2. **Every question, all in the chat:** `find_expert` → `evaluate` (free) → `budget_status` → `ask`: the connector pays the x402 call (`exact`) from the budget wallet — no prompts, never more than what's left.
+3. The agent route answers, runs the citation check, and settles via the facilitator only if it passes.
+4. **Running low:** Claude calls `close_problem` (rest returned) and `approve_budget` → a top-up link (the same signing page).
+5. **Withdraw any time:** `close_problem` → remainder to the buyer's MetaMask; receipt lists every payment with tx hashes.
 
 **Gas:** x402 payments are gasless, but the remainder refund is a normal transfer — the connector seeds each problem wallet with 0.00001 Base Sepolia ETH (~25× one ERC-20 transfer). The buyer's approval is gasless: the connector submits the signed authorisation from its gas funder wallet (ADR-011, Q-14 decided). Same USDC function the x402 `exact` scheme uses, already proven on Base Sepolia USDC by the spike.
 
@@ -40,6 +40,6 @@ None. [[ADR-013 Escrow for drafts|ADR-013]] is superseded:
 Two transfers per order: expert's share over x402 + Citable's fee as a separate transfer from the same budget (30% tier 1, 10% tiers 2–3 → [[ADR-016 Take rate on settled orders|ADR-016]]). **MVP:** shown on the receipt as waived, not collected.
 
 ## Wallets
-- **Buyer:** their own MetaMask on Base Sepolia, funded from the Circle faucet (20 USDC per address per 2h) — **USDC only, no ETH needed**. One signature per problem.
-- **Problem wallet:** fresh per problem, holds only the cap, pays x402 automatically, returns the remainder.
+- **Buyer:** their own MetaMask on Base Sepolia, funded from the Circle faucet (20 USDC per address per 2h) — **USDC only, no ETH needed**. One signature per top-up.
+- **Budget wallet** ("problem wallet" in code): one open per buyer link, holds only what was topped up, pays x402 automatically across questions, returns the remainder on close.
 - **Next:** email sign-in wallet, card top-up, EUR payout to experts → [[ADR-020 Crypto hidden at the edges]].
