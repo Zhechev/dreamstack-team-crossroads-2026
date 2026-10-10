@@ -1,0 +1,5 @@
+# Obsidian per-user UI state
+.obsidian/workspace*.json
+.obsidian/graph.json
+.trash/
+.DS_Store

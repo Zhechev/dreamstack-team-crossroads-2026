@@ -1,0 +1,244 @@
+{
+ "nodes": [
+  {
+   "id": "gb",
+   "type": "group",
+   "x": 0,
+   "y": 0,
+   "width": 320,
+   "height": 520,
+   "label": "BUYER",
+   "color": "2"
+  },
+  {
+   "id": "maria",
+   "type": "text",
+   "x": 30,
+   "y": 40,
+   "width": 260,
+   "height": 70,
+   "text": "**Maria**\ntells Claude her case"
+  },
+  {
+   "id": "claude",
+   "type": "text",
+   "x": 30,
+   "y": 150,
+   "width": 260,
+   "height": 70,
+   "text": "**Claude**\nany plan, incl. free"
+  },
+  {
+   "id": "mm",
+   "type": "text",
+   "x": 30,
+   "y": 270,
+   "width": 260,
+   "height": 80,
+   "text": "**MetaMask**\nUSDC + daily spend permission"
+  },
+  {
+   "id": "gc",
+   "type": "group",
+   "x": 400,
+   "y": 0,
+   "width": 620,
+   "height": 520,
+   "label": "CITABLE CLOUD",
+   "color": "5"
+  },
+  {
+   "id": "conn",
+   "type": "file",
+   "x": 430,
+   "y": 40,
+   "width": 260,
+   "height": 60,
+   "file": "02 Architecture/Buyer Connector.md"
+  },
+  {
+   "id": "mkt",
+   "type": "file",
+   "x": 730,
+   "y": 40,
+   "width": 260,
+   "height": 60,
+   "file": "02 Architecture/Marketplace.md"
+  },
+  {
+   "id": "supa",
+   "type": "text",
+   "x": 730,
+   "y": 150,
+   "width": 260,
+   "height": 70,
+   "text": "**Supabase**\nregistry \u00b7 orders \u00b7 ratings \u00b7 links"
+  },
+  {
+   "id": "judge",
+   "type": "text",
+   "x": 730,
+   "y": 270,
+   "width": 260,
+   "height": 70,
+   "text": "**Judge** (Edge Function)\ncitation check \u2192 refund"
+  },
+  {
+   "id": "web",
+   "type": "text",
+   "x": 430,
+   "y": 150,
+   "width": 260,
+   "height": 70,
+   "text": "**Lovable app**\nbrowse \u00b7 onboarding \u00b7 seller view"
+  },
+  {
+   "id": "gs",
+   "type": "group",
+   "x": 1100,
+   "y": 0,
+   "width": 340,
+   "height": 520,
+   "label": "SELLER MACHINE",
+   "color": "4"
+  },
+  {
+   "id": "stall",
+   "type": "file",
+   "x": 1130,
+   "y": 40,
+   "width": 280,
+   "height": 60,
+   "file": "02 Architecture/Stall.md"
+  },
+  {
+   "id": "corp",
+   "type": "text",
+   "x": 1130,
+   "y": 150,
+   "width": 280,
+   "height": 70,
+   "text": "**Corpus**\nprovisions \u00b7 FTS + pgvector"
+  },
+  {
+   "id": "llm",
+   "type": "text",
+   "x": 1130,
+   "y": 270,
+   "width": 280,
+   "height": 70,
+   "text": "**Claude API**\ndrafts from retrieved law"
+  },
+  {
+   "id": "gch",
+   "type": "group",
+   "x": 400,
+   "y": 600,
+   "width": 1040,
+   "height": 220,
+   "label": "BASE SEPOLIA",
+   "color": "6"
+  },
+  {
+   "id": "pay",
+   "type": "file",
+   "x": 430,
+   "y": 640,
+   "width": 260,
+   "height": 60,
+   "file": "02 Architecture/Payments & Escrow.md"
+  },
+  {
+   "id": "esc",
+   "type": "text",
+   "x": 730,
+   "y": 640,
+   "width": 300,
+   "height": 80,
+   "text": "**DreamEscrow**\ndeposit \u00b7 release 2% \u00b7 refund"
+  },
+  {
+   "id": "fac",
+   "type": "text",
+   "x": 1100,
+   "y": 640,
+   "width": 300,
+   "height": 80,
+   "text": "**x402.org facilitator**\nverify + settle"
+  }
+ ],
+ "edges": [
+  {
+   "id": "e0",
+   "fromNode": "maria",
+   "toNode": "claude"
+  },
+  {
+   "id": "e1",
+   "fromNode": "claude",
+   "toNode": "conn",
+   "label": "MCP via private link"
+  },
+  {
+   "id": "e2",
+   "fromNode": "conn",
+   "toNode": "supa",
+   "label": "search / rate / dispute"
+  },
+  {
+   "id": "e3",
+   "fromNode": "conn",
+   "toNode": "stall",
+   "label": "request \u2192 402 \u2192 pay \u2192 outcome",
+   "color": "2"
+  },
+  {
+   "id": "e4",
+   "fromNode": "mm",
+   "toNode": "fac",
+   "label": "x402 under permission",
+   "color": "2"
+  },
+  {
+   "id": "e5",
+   "fromNode": "mm",
+   "toNode": "esc",
+   "label": "deposit (drafts)",
+   "color": "2"
+  },
+  {
+   "id": "e6",
+   "fromNode": "stall",
+   "toNode": "supa",
+   "label": "register + heartbeat"
+  },
+  {
+   "id": "e7",
+   "fromNode": "stall",
+   "toNode": "corp"
+  },
+  {
+   "id": "e8",
+   "fromNode": "corp",
+   "toNode": "llm"
+  },
+  {
+   "id": "e9",
+   "fromNode": "judge",
+   "toNode": "esc",
+   "label": "refund",
+   "color": "1"
+  },
+  {
+   "id": "e10",
+   "fromNode": "web",
+   "toNode": "supa"
+  },
+  {
+   "id": "e11",
+   "fromNode": "web",
+   "toNode": "mm",
+   "label": "grant permission"
+  }
+ ]
+}
