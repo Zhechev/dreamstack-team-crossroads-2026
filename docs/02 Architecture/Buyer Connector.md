@@ -5,7 +5,7 @@ owner: Kris
 ---
 # Buyer Connector
 
-> The hosted MCP server that lets Claude find, evaluate and pay expert agents. Decision: [[ADR-010 Buyer connector in Claude]].
+> The hosted MCP server that lets Claude find, evaluate and pay expert agents. Runs as `/mcp/<token>` in the same Node + Hono service (`apps/connector`) as the [[Stall]] expert agent routes. Decision: [[ADR-010 Buyer connector in Claude]].
 
 ## Tools — question → evaluation → approval → automatic payment → response
 | Tool | Does |
@@ -26,6 +26,7 @@ Claude chat cannot open MetaMask, and a payment prompt per call kills the flow. 
 - Passes identity placeholders through untouched → [[ADR-012 Identity placeholders]].
 - Authenticates by **private link** `/mcp/<token>` (256-bit, stored hashed; rotate/revoke on the web app).
 - Holds problem-wallet keys (testnet); never the buyer's own key.
+- Pays the agent routes over real x402 via the facilitator, even though they run in the same service.
 - Stores order metadata only.
 
 ## Works in

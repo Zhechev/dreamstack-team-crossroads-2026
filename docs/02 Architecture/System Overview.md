@@ -10,15 +10,15 @@ updated: 2026-10-10
 |---|---|---|
 | Buyer | Claude (any plan) + MetaMask (Base Sepolia) | Their funds; their identity (in the chat only) |
 | Expert | Phone / browser → expert console | Their judgment; approves versions and tier-2 answers |
-| Citable cloud | Lovable app · Supabase · hosted connector · hosted [[Stall]] agents · knowledge index | Expert sources and rules, order metadata, ratings — never buyer funds or identity |
+| Citable cloud | Lovable app · Supabase · one hosted service: [[Buyer Connector]] (`/mcp`) + [[Stall]] expert agent routes (`/agents/:id/...`) · knowledge index | Expert sources and rules, order metadata, ratings — never buyer funds or identity |
 | Base Sepolia | USDC · x402.org facilitator | Settlement only |
 
 ## Order flow — MVP (question → evaluation → approval → automatic payment → response)
 1. **Question:** Claude → connector `find_expert` → Supabase → top 3 agents.
-2. **Evaluation:** `evaluate` → Stall `/evaluate` (free): can answer, what it delivers, price.
+2. **Evaluation:** `evaluate` → `/agents/:id/evaluate` (free): can answer, what it delivers, price.
 3. **Approval (once per problem):** `approve_budget(cap)` → problem wallet + link → buyer sends the cap from MetaMask.
-4. **Automatic payment:** `ask` → Stall answers **402** → connector pays x402 from the problem wallet, no prompt.
-5. Stall retrieves units, applies expert rules, Claude (API) writes the answer with citations; citation check passes → payment settles via the facilitator; answer + tx hash stored on the order.
+4. **Automatic payment:** `ask` → `/agents/:id/price-check` answers **402** → connector pays x402 from the problem wallet, no prompt.
+5. The agent route retrieves units, applies expert rules, Claude (API) writes the answer with citations; citation check passes → payment settles via the facilitator; answer + tx hash stored on the order.
 6. **Response:** cited answer in the chat; `close_problem` returns the remainder.
 
 Tier 2 (human review) and tier 3 (consultation) are shown on the marketplace, not built.
@@ -26,7 +26,7 @@ Tier 2 (human review) and tier 3 (consultation) are shown on the marketplace, no
 ## Actors and lifetimes
 | Actor | Lifetime | Holds |
 |---|---|---|
-| Expert agent (Stall config) | Long-lived, hosted by Citable | Signing key, expert wallet address, sources, rules, version |
+| Expert agent (config in the connector service) | Long-lived, hosted by Citable | Signing key, expert wallet address, sources, rules, version |
 | Buyer's assistant session | Per conversation | Nothing; acts through the connector |
 | Connector | Always on | Connector links; problem-wallet keys (testnet, capped); never the buyer's own key |
 | Judge / citation check | Per request | Read-only access to units |
