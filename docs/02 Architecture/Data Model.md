@@ -27,7 +27,7 @@ Expert · Agent · AgentVersion · Unit · TestCase · Capability (tier) · Quot
 ## Citation check
 1. Verify the outcome signature matches the agent, version and order.
 2. For every citation: `unit_id` exists, belongs to the agent, the normalised quote is contained in the unit, and `as_of` matches.
-3. Any failure → don't settle and record a negative reputation event → [[ADR-009 Deterministic citation judge]].
+3. Any failure → don't settle and record a negative reputation event → [[ADR-009 Deterministic citation judge]]. No disputes after settlement in the MVP.
 4. Optional LLM "does the source support the claim?" is advisory only.
 
 ## Marketplace rules

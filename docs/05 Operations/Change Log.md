@@ -6,6 +6,7 @@ updated: 2026-10-10
 
 > One line per change to a decision or plan, newest first.
 
+- 2026-10-10 — **All open questions closed (grilling round).** Q-4 headline *"Ask your AI. Get an answer an expert stands behind."* + seller line (ADR-014) · Q-5 no escrow, tier 2 settles on delivery (ADR-013 superseded) · Q-9 take rate 30% tier 1 / 10% tiers 2–3, two transfers, waived in MVP (ADR-016) · Q-12 ChatGPT not in demo or slides (ADR-010) · Q-13 facts checked → [[Fact Check 2026-10-10]], competition 2×2 · judge = check before settle, no post-settlement refunds (ADR-009) · custody wording "hard cap, rest comes back" (ADR-002, 011) · card-in/euros-out with no provider named (ADR-020).
 - 2026-10-10 — **Q-11 closed: logo mark is the citation pill [✓]** (ADR-018), replacing the legal-tech §. Ink brackets, Seal check; also the favicon. Brand note and Lovable style prompt updated.
 - 2026-10-10 — **Q-14 closed: gasless buyer approval** (ADR-011). MetaMask signs an EIP-3009 `transferWithAuthorization` of the cap; the connector submits it and pays the gas. Buyer needs only faucet USDC. Payments & Escrow, tickets 11 and 15 updated.
 - 2026-10-10 — **Spike T-09 / ticket 03: GO.** Problem wallet pays x402 on Base Sepolia, failing check is not settled, remainder refunded. Findings recorded in Payments & Escrow, Tech Stack and tickets 08, 09, 11, 12, 15: settle-after-check needs only a 4xx, dedicated RPC needed, gas seed 0.00001 ETH, buyer needs ETH for a plain transfer → new Q-14 (gasless approval).

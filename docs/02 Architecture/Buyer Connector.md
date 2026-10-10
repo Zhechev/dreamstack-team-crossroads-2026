@@ -30,4 +30,4 @@ Claude chat cannot open MetaMask, and a payment prompt per call kills the flow. 
 - Stores order metadata only.
 
 ## Works in
-Claude web, desktop and mobile, every plan (free plan: one custom connector). ChatGPT pending Q-12.
+Claude web, desktop and mobile, every plan (free plan: one custom connector). ChatGPT not supported (custom write-capable apps are a Business/Enterprise beta; no x402) → [[ADR-010 Buyer connector in Claude|ADR-010]].

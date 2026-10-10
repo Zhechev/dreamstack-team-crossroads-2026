@@ -24,4 +24,4 @@ A buyer is about to offer **€180k for a 2-bedroom flat in Lozenets, Sofia**. A
 | Price check | 0.50 | x402 paid by the agent from the problem wallet, settled after the citation check |
 | Human review / consultation | 20 / 50+ | shown only |
 
-Take rate per tier is open → [[Business Model]].
+Take rate: 30% on tier 1, 10% on tiers 2–3; shown on the receipt, waived during the hackathon → [[Business Model]].
