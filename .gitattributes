@@ -1,0 +1,2 @@
+# Terms are hashed byte for byte; keep LF on every OS so the hash matches.
+terms/*.md text eol=lf
