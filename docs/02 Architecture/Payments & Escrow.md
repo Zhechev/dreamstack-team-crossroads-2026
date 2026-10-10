@@ -14,6 +14,8 @@ owner: Kris
 4. Stall answers, runs the citation check, settles via the facilitator only if it passes.
 5. `close_problem` → remainder returned to the buyer's MetaMask; receipt lists every payment with tx hashes.
 
+**Gas:** x402 payments are gasless, but the remainder refund is a normal transfer — the connector seeds each problem wallet with a little Base Sepolia ETH.
+
 **Spike T-09** must confirm: x402 client (`@x402/fetch` + viem account) pays from the problem wallet on Base Sepolia, and the middleware lets us settle after the check.
 Production: same UX with a spend permission scoped to the problem → [[ADR-011 Buyer wallet and spend permission]].
 

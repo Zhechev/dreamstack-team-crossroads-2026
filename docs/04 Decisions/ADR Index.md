@@ -20,11 +20,11 @@ updated: 2026-10-10
 | [[ADR-010 Buyer connector in Claude\|ADR-010]] | Buyer connector in Claude |
 | [[ADR-011 Buyer wallet and spend permission\|ADR-011]] | Buyer wallet and spend permission |
 | [[ADR-012 Identity placeholders\|ADR-012]] | Identity placeholders |
-| [[ADR-013 Escrow for drafts\|ADR-013]] | Escrow for drafts — *under review* |
+| [[ADR-013 Escrow for drafts\|ADR-013]] | Escrow for drafts — *deferred (not in MVP)* |
 | [[ADR-014 Promises and claims\|ADR-014]] | Promises and claims |
 | [[ADR-015 Demo prices\|ADR-015]] | Demo prices |
 | [[ADR-016 Take rate on settled orders\|ADR-016]] | Take rate on settled orders |
-| [[ADR-017 MVP scope and event fit\|ADR-017]] | MVP scope and event fit — *under review* |
+| [[ADR-017 MVP scope and event fit\|ADR-017]] | MVP scope and event fit |
 | [[ADR-018 Name, brand and iOS-style UI\|ADR-018]] | Name, brand and iOS-style UI |
 | [[ADR-019 Three-tier expert funnel\|ADR-019]] | Three-tier expert funnel |
 | [[ADR-020 Crypto hidden at the edges\|ADR-020]] | Crypto hidden at the edges |

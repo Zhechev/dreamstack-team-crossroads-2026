@@ -1,12 +1,12 @@
 ---
 type: adr
 id: ADR-013
-status: Under review
+status: Deferred
 updated: 2026-10-10
 ---
 # ADR-013 Escrow for drafts
 
-> **Under review (2026-10-10):** drafts are gone with the pivot ([[ADR-019 Three-tier expert funnel|ADR-019]]). Whether escrow survives — e.g. for tier-2 human review or for the citation refund — is open in [[Open Questions]].
+> **Deferred (2026-10-10):** not in the MVP — the tier-1 guarantee is "settle only after the citation check" ([[ADR-011 Buyer wallet and spend permission|ADR-011]], [[Payments & Escrow]]). Revisit for tier 2 after the hackathon ([[Open Questions]] Q-5).
 
 ## Context
 Plain x402 pays a fixed amount to an address with no order reference, so escrow can't attribute it; drafts need refunds.

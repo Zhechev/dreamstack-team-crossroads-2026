@@ -16,10 +16,10 @@ updated: 2026-10-10
 | T-06 | Hosted Stall: `/evaluate` (free), `/price-check` (x402 0.50), citation check before settle, signed outcome → order | Claude Code | Mitko | 5 | todo |
 | T-07 | Connector: `find_expert`, `evaluate`, `approve_budget`, `ask` (auto x402 from problem wallet), `budget_status`, `close_problem`; private link auth; deploy | Claude Code | Kris | 4 | todo |
 | T-08 | Lovable: landing, browse agents (tiers 2–3 shown), budget approval page (MetaMask), receipt view | Lovable | Kris | 4 | todo |
-| T-09 | **Spike:** problem wallet pays x402 on Base Sepolia (`@x402/fetch` + viem) + settle after check | Claude Code | Kris | 2 | todo |
+| T-09 | **Spike:** problem wallet pays x402 on Base Sepolia (`@x402/fetch` + viem) + settle after check + gas top-up (testnet ETH) for the remainder refund | Claude Code | Kris | 2 | todo |
 | T-10 | Fund demo MetaMask wallets with faucet USDC | — | Kris | 0.5 | todo |
 | T-11 | Terms v1 text + hash | — | Mitko | 1 | todo |
-| T-12 | End-to-end run: question → evaluation → payment → response | — | Both | 3 each | todo |
+| T-12 | End-to-end run: question → evaluation → one approval → automatic payment → response | — | Both | 3 each | todo |
 | T-13 | Record 2-min MP4 by Sun 12:30 | — | Both | 1.5 each | todo |
 | T-14 | 8-slide PDF + pitch rehearsal | — | Kris | 3 | todo |
 
