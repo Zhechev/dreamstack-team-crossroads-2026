@@ -4,7 +4,8 @@ import { Evaluation } from "@citable/protocol";
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 import { Hono } from "hono";
 import type { Config } from "./config.js";
-import { supabaseAgentLoader, type AgentLoader } from "./agents/load.js";
+import { defaultAgentDeps, type AgentDeps } from "./agents/deps.js";
+import { supabaseAgentLoader } from "./agents/load.js";
 import { supabaseLinkVerifier, type LinkVerifier } from "./mcp/links.js";
 import { supabaseExpertSearch, type ExpertSearch } from "./mcp/search.js";
 import { createAgentRoutes } from "./routes/agents.js";
@@ -15,8 +16,7 @@ import { supabaseProblemStore, type ProblemStore } from "./problems/store.js";
 import { createProblemRoutes } from "./routes/problems.js";
 
 /** Collaborators the routes need; tests pass fakes, production builds them from config. */
-export type AppDeps = {
-  loadAgent: AgentLoader;
+export type AppDeps = AgentDeps & {
   verifyLink: LinkVerifier;
   searchExperts: ExpertSearch;
   problemStore: ProblemStore;
@@ -51,6 +51,8 @@ export function createApp(config: Config, deps: Partial<AppDeps> = {}) {
     },
     webAppUrl: config.webAppUrl,
   });
+  // Expert agent routes (tickets 07–09): defaults share the client and agent loader above.
+  const agentDeps = withDefaults(defaultAgentDeps(config, { db, loadAgent }), deps);
 
   const app = new Hono();
 
@@ -69,7 +71,7 @@ export function createApp(config: Config, deps: Partial<AppDeps> = {}) {
 
   app.get("/health", (c) => c.json({ ok: true }));
   app.route("/mcp", createMcpRoutes({ verifyLink, searchExperts, evaluateAgent, problems }));
-  app.route("/agents", createAgentRoutes({ loadAgent }));
+  app.route("/agents", createAgentRoutes(agentDeps));
   app.route("/problems", createProblemRoutes({ problems, allowedOrigins: config.allowedOrigins }));
   return app;
 }
@@ -84,4 +86,15 @@ function supabaseFrom(config: Config): SupabaseClient {
     throw new Error("Set SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY (see .env.example)");
   }
   return createClient(config.supabaseUrl, config.supabaseServiceRoleKey, { auth: { persistSession: false } });
+}
+
+// Keep the lazy getters of the agent defaults; only replace the agent deps the caller passed.
+function withDefaults(defaults: AgentDeps, overrides: Partial<AppDeps>): AgentDeps {
+  const merged = Object.create(defaults) as AgentDeps;
+  for (const key of Object.keys(defaults) as (keyof AgentDeps)[]) {
+    const value = overrides[key];
+    if (value !== undefined) Object.defineProperty(merged, key, { value, enumerable: true });
+  }
+  if (overrides.now) Object.defineProperty(merged, "now", { value: overrides.now, enumerable: true });
+  return merged;
 }

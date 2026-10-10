@@ -11,18 +11,26 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run --exclude \"**/*.db.test.ts\"",
     "test:db": "vitest run db.test",
-    "fund-problem": "tsx --env-file-if-exists=../../.env scripts/fund-problem.ts"
+    "fund-problem": "tsx --env-file-if-exists=../../.env scripts/fund-problem.ts",
+    "configure:demo": "tsx --env-file-if-exists=../../.env src/scripts/configure-demo.ts",
+    "price-check:live": "tsx --env-file-if-exists=../../.env src/scripts/price-check-live.ts"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "0.133.0",
+    "@citable/knowledge": "workspace:*",
     "@citable/protocol": "workspace:*",
     "@hono/node-server": "2.1.1",
     "@modelcontextprotocol/server": "2.1.0",
     "@supabase/supabase-js": "2.117.3",
+    "@x402/core": "2.28.0",
+    "@x402/evm": "2.28.0",
+    "@x402/hono": "2.28.0",
     "hono": "4.13.9",
-    "viem": "2.56.9",
+    "viem": "2.57.4",
     "zod": "4.6.5"
   },
   "devDependencies": {
+    "@x402/fetch": "2.28.0",
     "tsx": "4.23.15"
   }
 }

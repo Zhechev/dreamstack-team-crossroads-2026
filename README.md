@@ -98,6 +98,21 @@ curl -X POST http://localhost:4010/agents/lozenets-price-check/evaluate \
 
 `POST /agents/:id/evaluate` is free (no x402) and deterministic: `can_answer` is true only for a property question that names the agent's area. Out of scope returns `can_answer: false` and price `"0.00"`. Agent config (sources, rules, prices, version, payout address) comes from the authorised version in Supabase and is cached for 60 s.
 
+### Paid price check (x402, 0.50 USDC)
+
+`POST /agents/:id/price-check` with `{"question": "…", "order_id"?: "<from create_order>"}`. It works like this:
+
+- **Unpaid:** the route answers `402` with an x402 `exact` requirement for 0.50 USDC on Base Sepolia, paid to the agent's payout address.
+- **Paid:** the agent searches its units, drops deals older than 90 days and answers from what remains. It returns a `SignedOutcome` (text, citations `{unit_id, quote, as_of}`, agent version, signature by `AGENT_SIGNING_KEY`).
+- **Who writes the answer:** Claude (`claude-opus-5-5`, structured output) when `ANTHROPIC_API_KEY` is set. Otherwise a deterministic answer built from the comparable deals.
+- **Not charged:** an answer that can't be given from the evidence, or that says "appraisal" or "valuation", returns `422`, and the payment is never settled.
+- **Recorded:** the order stores the answer, citations, signature and Terms hash, and gets the tx hash once the facilitator settles.
+
+```sh
+pnpm --filter @citable/connector configure:demo     # after every db reset: signing address (+ AGENT_PAYOUT_ADDRESS) on the demo agents
+pnpm --filter @citable/connector price-check:live   # pays the running connector on Base Sepolia from BUYER_PRIVATE_KEY (needs test USDC)
+```
+
 ## Licence
 
 MIT — see [LICENSE](LICENSE).
