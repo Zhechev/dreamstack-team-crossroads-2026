@@ -1,5 +1,5 @@
 // One hosted service (ADR-007): /mcp for Claude, /agents/:id/... for the expert agents,
-// /problems/:id for budget state read by the Lovable approval page.
+// /problems/:id for budget state read by the Lovable approval page, /earnings/:agent for the demo's live payouts.
 import { Evaluation } from "@citable/protocol";
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 import { Hono } from "hono";
@@ -16,6 +16,8 @@ import { x402AgentPayer, type AgentPayer } from "./problems/pay.js";
 import { createProblems, type ProblemsDeps } from "./problems/service.js";
 import { supabaseProblemStore, type ProblemStore } from "./problems/store.js";
 import { createProblemRoutes } from "./routes/problems.js";
+import { supabaseEarnings, type EarningsReader } from "./earnings/store.js";
+import { createEarningsRoutes } from "./routes/earnings.js";
 
 /** Collaborators the routes need; tests pass fakes, production builds them from config. */
 export type AppDeps = AgentDeps & {
@@ -25,6 +27,7 @@ export type AppDeps = AgentDeps & {
   chain: Chain;
   agentPayer: AgentPayer;
   unitSources: ProblemsDeps["unitSources"];
+  readEarnings: EarningsReader;
 };
 
 export function createApp(config: Config, deps: Partial<AppDeps> = {}) {
@@ -83,6 +86,8 @@ export function createApp(config: Config, deps: Partial<AppDeps> = {}) {
   app.route("/", createDiscoveryRoutes({ publicUrl: config.publicUrl, webAppUrl: config.webAppUrl }));
   app.route("/mcp", createMcpRoutes({ verifyLink, searchExperts, evaluateAgent, problems }));
   app.route("/agents", createAgentRoutes(agentDeps));
+  const earnings = lazy(() => supabaseEarnings(db(), (a) => chain.usdcBalance(a)));
+  app.route("/earnings", createEarningsRoutes({ readEarnings: deps.readEarnings ?? ((id) => earnings()(id)) }));
   app.route("/problems", createProblemRoutes({ problems, verifyLink, allowedOrigins: config.allowedOrigins }));
   return app;
 }

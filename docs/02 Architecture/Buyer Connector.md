@@ -19,8 +19,6 @@ owner: Kris
 
 Tier 2 review and tier 3 consultation are shown on the marketplace, not built.
 
-`find_expert` also renders as inline expert cards in hosts that support MCP Apps (`ui://citable/find-expert.html`); a card's button sends "check with this expert" back to Claude. Other clients get the text result unchanged (ticket 23).
-
 ## Why top up once
 Claude chat cannot open MetaMask, and a payment prompt — or an approval page — per question kills the flow. The buyer tops up a budget once at setup; the agent pays itself from it, question after question, never above what's left. → [[ADR-011 Buyer wallet and spend permission]]
 

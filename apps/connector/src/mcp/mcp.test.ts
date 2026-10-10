@@ -4,7 +4,6 @@ import { createApp } from "../app.js";
 import { loadConfig } from "../config.js";
 import { hashToken } from "./links.js";
 import type { ExpertMatch } from "./search.js";
-import { EXPERT_CARDS_URI, MCP_APP_MIME } from "./ui.js";
 
 const TOKEN = "ctb_" + "a".repeat(43);
 
@@ -89,23 +88,6 @@ describe("MCP connector", () => {
     const { body } = await call("find_expert", { question: "Is 180k EUR fair for a 2-bed in Lozenets?", budget: "2.00" });
     expect(body.result.structuredContent).toEqual({ agents: [match] });
     expect(searches.at(-1)).toEqual({ question: "Is 180k EUR fair for a 2-bed in Lozenets?", budget: "2.00" });
-  });
-
-  it("find_expert links to the expert cards view (MCP Apps)", async () => {
-    const { body } = await rpc("tools/list");
-    const tool = body.result.tools.find((t: { name: string }) => t.name === "find_expert");
-    expect(tool._meta.ui.resourceUri).toBe(EXPERT_CARDS_URI);
-  });
-
-  it("serves the expert cards as a self-contained MCP App resource", async () => {
-    const list = await rpc("resources/list");
-    expect(list.body.result.resources).toContainEqual(expect.objectContaining({ uri: EXPERT_CARDS_URI, mimeType: MCP_APP_MIME }));
-    const { body } = await rpc("resources/read", { uri: EXPERT_CARDS_URI });
-    const [content] = body.result.contents;
-    expect(content.mimeType).toBe(MCP_APP_MIME);
-    expect(content.text).toMatch(/ui\/initialize/);
-    // Default CSP blocks external loads, so the view must not reference any.
-    expect(content.text).not.toMatch(/(src|href)=["']https?:/);
   });
 
   it("evaluate returns the agent's Evaluation unchanged", async () => {
