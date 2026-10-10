@@ -7,10 +7,12 @@
 
 **Blocked by:** 04 (Supabase schema, RLS + seeded demo experts)
 
-**Status:** ready-for-agent
+**Status:** done
 
-- [ ] `search_agents`: question + budget → top 3 authorised agents within budget, sorted by rating (ADR-004)
-- [ ] `create_order` and `get_order`: create an order for agent + question; read status, answer, citations, tx hashes
-- [ ] Connector link functions: issue (returns the plain token once, stores only the hash), rotate, revoke
-- [ ] All callable with curl; example calls in the README
-- [ ] CORS allows the Lovable app's domain
+- [x] `search_agents`: question + budget → top 3 authorised agents within budget, sorted by rating (ADR-004)
+- [x] `create_order` and `get_order`: create an order for agent + question; read status, answer, citations, tx hashes
+- [x] Connector link functions: issue (returns the plain token once, stores only the hash), rotate, revoke
+- [x] All callable with curl; example calls in the README
+- [x] CORS allows the Lovable app's domain
+
+**Notes:** `create_order` requires the buyer's `x-connector-token`, so every order belongs to a link; tier 2/3 capabilities answer 409 (shown only). `get_order` is keyed by the unguessable order uuid and never returns seeded demo orders. `connector_link/verify` is for the connector (ticket 10). Orders have one `tx_hash` (the x402 payment); the problem-wallet funding and refund hashes belong to the problem (ticket 11). Locally the gateway adds `Access-Control-Allow-Origin: *`; on hosted Supabase the functions' own CORS rules apply. Prices are protocol text ("0.50").
