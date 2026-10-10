@@ -1,40 +1,87 @@
 // One hosted service (ADR-007): /mcp for Claude, /agents/:id/... for the expert agents,
 // /problems/:id for budget state read by the Lovable approval page.
-import { createClient } from "@supabase/supabase-js";
+import { Evaluation } from "@citable/protocol";
+import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 import { Hono } from "hono";
 import type { Config } from "./config.js";
 import { supabaseAgentLoader, type AgentLoader } from "./agents/load.js";
+import { supabaseLinkVerifier, type LinkVerifier } from "./mcp/links.js";
+import { supabaseExpertSearch, type ExpertSearch } from "./mcp/search.js";
 import { createAgentRoutes } from "./routes/agents.js";
-import { mcp } from "./routes/mcp.js";
-import { problems } from "./routes/problems.js";
+import { createMcpRoutes } from "./routes/mcp.js";
+import { baseSepoliaChain, type Chain } from "./problems/chain.js";
+import { createProblems } from "./problems/service.js";
+import { supabaseProblemStore, type ProblemStore } from "./problems/store.js";
+import { createProblemRoutes } from "./routes/problems.js";
 
 /** Collaborators the routes need; tests pass fakes, production builds them from config. */
 export type AppDeps = {
   loadAgent: AgentLoader;
+  verifyLink: LinkVerifier;
+  searchExperts: ExpertSearch;
+  problemStore: ProblemStore;
+  chain: Chain;
 };
 
 export function createApp(config: Config, deps: Partial<AppDeps> = {}) {
-  const loadAgent = deps.loadAgent ?? lazySupabaseLoader(config);
+  // Built on first use, so the service (and its tests) start without Supabase keys.
+  const db = lazy(() => supabaseFrom(config));
+  const agentLoader = lazy(() => supabaseAgentLoader(db()));
+  const linkVerifier = lazy(() => supabaseLinkVerifier(db()));
+  const expertSearch = lazy(() => supabaseExpertSearch(db()));
+  const loadAgent = deps.loadAgent ?? ((id) => agentLoader()(id));
+  const verifyLink = deps.verifyLink ?? ((token) => linkVerifier()(token));
+  const searchExperts = deps.searchExperts ?? ((q, budget) => expertSearch()(q, budget));
+  const store = lazy(() => deps.problemStore ?? supabaseProblemStore(db()));
+  const chain =
+    deps.chain ?? baseSepoliaChain({ rpcUrl: config.rpcUrl, usdcAddress: config.usdcAddress, gasFunderKey: config.gasFunderKey });
+  const problems = createProblems({
+    store: {
+      create: (p) => store().create(p),
+      get: (id) => store().get(id),
+      latestOpen: (id) => store().latestOpen(id),
+      markFunded: (id, f) => store().markFunded(id, f),
+      setGasSeed: (id, tx) => store().setGasSeed(id, tx),
+    },
+    chain,
+    usdc: { chainId: config.chainId, usdcAddress: config.usdcAddress },
+    get walletSecret() {
+      if (!config.problemWalletSecret) throw new Error("Set PROBLEM_WALLET_SECRET (see .env.example)");
+      return config.problemWalletSecret;
+    },
+    webAppUrl: config.webAppUrl,
+  });
 
   const app = new Hono();
+
+  // The connector calls the agent routes over HTTP, as it would an outside agent (ADR-007).
+  // In-process for now; ask (ticket 12) pays the same routes over x402.
+  const evaluateAgent = async (agentId: string, question: string) => {
+    const res = await app.request(`/agents/${encodeURIComponent(agentId)}/evaluate`, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ question }),
+    });
+    if (res.status === 404) return null;
+    if (!res.ok) throw new Error(`evaluate ${agentId}: HTTP ${res.status}`);
+    return Evaluation.parse(await res.json());
+  };
+
   app.get("/health", (c) => c.json({ ok: true }));
-  app.route("/mcp", mcp);
+  app.route("/mcp", createMcpRoutes({ verifyLink, searchExperts, evaluateAgent, problems }));
   app.route("/agents", createAgentRoutes({ loadAgent }));
-  app.route("/problems", problems);
+  app.route("/problems", createProblemRoutes({ problems, allowedOrigins: config.allowedOrigins }));
   return app;
 }
 
-// Built on first use, so the service (and its tests) start without Supabase keys.
-function lazySupabaseLoader(config: Config): AgentLoader {
-  let loader: AgentLoader | undefined;
-  return (idOrSlug) => {
-    if (!loader) {
-      if (!config.supabaseUrl || !config.supabaseServiceRoleKey) {
-        throw new Error("Set SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY (see .env.example)");
-      }
-      const db = createClient(config.supabaseUrl, config.supabaseServiceRoleKey, { auth: { persistSession: false } });
-      loader = supabaseAgentLoader(db);
-    }
-    return loader(idOrSlug);
-  };
+const lazy = <T>(make: () => T) => {
+  let value: T | undefined;
+  return () => (value ??= make());
+};
+
+function supabaseFrom(config: Config): SupabaseClient {
+  if (!config.supabaseUrl || !config.supabaseServiceRoleKey) {
+    throw new Error("Set SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY (see .env.example)");
+  }
+  return createClient(config.supabaseUrl, config.supabaseServiceRoleKey, { auth: { persistSession: false } });
 }

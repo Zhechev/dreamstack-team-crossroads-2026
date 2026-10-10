@@ -10,13 +10,17 @@
     "build": "tsc -p tsconfig.build.json",
     "typecheck": "tsc --noEmit",
     "test": "vitest run --exclude \"**/*.db.test.ts\"",
-    "test:db": "vitest run db.test"
+    "test:db": "vitest run db.test",
+    "fund-problem": "tsx --env-file-if-exists=../../.env scripts/fund-problem.ts"
   },
   "dependencies": {
     "@citable/protocol": "workspace:*",
     "@hono/node-server": "2.1.1",
+    "@modelcontextprotocol/server": "2.1.0",
     "@supabase/supabase-js": "2.117.3",
-    "hono": "4.13.9"
+    "hono": "4.13.9",
+    "viem": "2.56.9",
+    "zod": "4.6.5"
   },
   "devDependencies": {
     "tsx": "4.23.15"
