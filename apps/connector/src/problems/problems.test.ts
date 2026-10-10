@@ -187,6 +187,16 @@ describe("problem state + gasless funding", () => {
     expect(fake.seeded).toEqual([body.state.wallet_address]);
   });
 
+  it("tops up even when the gas seed fails (funder out of ETH)", async () => {
+    fake.chain.seedGas = async () => {
+      throw new Error("insufficient funds for gas");
+    };
+    const res = await fund(id, await signFor(id, generatePrivateKey()));
+    expect(res.status).toBe(200);
+    expect(((await res.json()) as any).state).toMatchObject({ funded: true, funding_tx: tx(1) });
+    expect(store.rows.get(id)!.gasSeedTx).toBeNull();
+  });
+
   it("rejects a signature over a different amount", async () => {
     const res = await fund(id, await signFor(id, generatePrivateKey(), { value: "1" }));
     expect(res.status).toBe(400);
@@ -338,6 +348,24 @@ describe("close_problem", () => {
     const to = privateKeyToAccount(generatePrivateKey()).address;
     const r = await tool("close_problem", { refund_to: to });
     expect(r.structuredContent).toMatchObject({ refunded: "2.00", refund_to: to, receipts: [] });
+  });
+});
+
+describe("close_problem after a failed gas seed", () => {
+  it("seeds gas before the refund", async () => {
+    const id = (await tool("approve_budget", { cap: "2.00" })).structuredContent.problem_id;
+    const seed = fake.chain.seedGas;
+    fake.chain.seedGas = async () => {
+      throw new Error("insufficient funds for gas");
+    };
+    await fund(id, await signFor(id, generatePrivateKey()));
+    fake.chain.seedGas = seed;
+    const wallet = store.rows.get(id)!.walletAddress;
+    fake.balances.set(wallet.toLowerCase(), 2_000_000n);
+
+    await tool("close_problem", {});
+    expect(fake.seeded).toEqual([wallet]);
+    expect(store.rows.get(id)).toMatchObject({ gasSeedTx: tx(2), refundTx: tx(4) });
   });
 });
 
