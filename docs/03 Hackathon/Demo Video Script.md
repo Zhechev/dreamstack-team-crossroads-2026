@@ -4,7 +4,7 @@ updated: 2026-10-10
 ---
 # Demo Video Script — 2:00
 
-> The MP4 the judges watch. Story: [[Demo Story]]. Claude scenes are a split screen: Claude on the left, the expert's live earnings page (`/earnings/lozenets-price-check`, ticket 24) on the right, so each 0.50 visibly lands with the expert. Headline: *"Ask your AI. Get an answer an expert stands behind."* ([[ADR-014 Promises and claims]]).
+> The MP4 the judges watch. Story: [[Demo Story]]. Claude scenes are a split screen: Claude on the left, the expert's live earnings page (`/earnings/lozenets-price-check`, ticket 24) or Citable's fees (`/earnings`, ticket 25) on the right, so each 0.50 visibly lands with the expert. Headline: *"Ask your AI. Get an answer an expert stands behind."* ([[ADR-014 Promises and claims]]).
 
 | Time | Screen | Voice-over |
 |---|---|---|

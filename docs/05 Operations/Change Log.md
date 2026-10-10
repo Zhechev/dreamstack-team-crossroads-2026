@@ -6,6 +6,7 @@ updated: 2026-10-10
 
 > One line per change to a decision or plan, newest first.
 
+- 2026-10-10 — **Citable earnings page (ticket 25).** `/earnings` shows Citable's fee on every real settled order at the ADR-016 take rate (0.15 of each 0.50), live. Shown without a "waived" label on this page (Kris); still not collected — the whole 0.50 settles to the expert on-chain.
 - 2026-10-10 — **Demo is a split screen (ticket 24).** Claude answers in plain text (the ticket 23 inline cards are removed); next to it, the connector's live earnings page `/earnings/lozenets-price-check` shows the expert's payout wallet balance and each 0.50 landing with its tx hash.
 - 2026-10-10 — **find_expert shows inline cards in Claude (ticket 23).** The connector serves an MCP Apps view (`ui://citable/find-expert.html`) so the buyer sees the top expert agents as cards in the chat and taps "Check with this expert" without leaving it. Top-up stays a link: MetaMask cannot sign inside the sandboxed iframe.
 - 2026-10-10 — **Site audit fixes (ticket 22) and expert applications.** "Funds never pass through us" is only true in production (ADR-011): landing, Business Model and Pitch Deck now say so, with a testnet line. Expert sign-up goes to a form backed by the new `expert_application` Edge Function and private `expert_applications` table (reviewed by hand in Supabase Studio). Ticket 20 now waits for ticket 22.

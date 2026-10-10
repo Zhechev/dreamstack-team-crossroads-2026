@@ -1,13 +1,38 @@
-// The earnings page (Brand: Paper, Ink, one Seal accent). Rendered client-side from the feed, so buyer text
-// only ever reaches the DOM through textContent.
-import type { Earnings } from "./store.js";
+// Live earnings pages (Brand: Paper, Ink, one Seal accent): one expert's payouts, or Citable's fees.
+// Rendered client-side from the feed, so buyer text only ever reaches the DOM through textContent.
+import type { CitableEarnings, Earnings } from "./store.js";
 
 const POLL_MS = 2000;
 
 /** JSON safe to drop inside a <script> element. */
 const scriptJson = (value: unknown) => JSON.stringify(value).replace(/</g, "\\u003c");
 
-export function earningsPage(initial: Earnings): string {
+/** Maps a feed to what the shared renderer shows: { title, sub, big, stats, rows, toast, wallet? }. */
+const EXPERT_VIEW = `(e) => ({
+  title: e.agent.expert,
+  sub: e.agent.name,
+  bigLabel: "Payout wallet",
+  big: e.balance === null ? null : Number(e.balance),
+  stats: [["Earned on Citable", e.total + " USDC"], ["Answers sold", e.count]],
+  rows: e.payments.map((p) => ({ id: p.orderId, text: p.question, amount: p.amount, meta: [] , txHash: p.txHash, at: p.at })),
+  toast: (p) => "+" + p.amount + " USDC · answer sold",
+  wallet: e.agent.payoutAddress,
+})`;
+
+const CITABLE_VIEW = `(e) => ({
+  title: "Citable revenue",
+  sub: "All expert agents",
+  bigLabel: "Fees earned",
+  big: Number(e.fees),
+  stats: [["Paid to experts", e.paidToExperts + " USDC"], ["Answers sold", e.count], ["Experts earning", e.experts]],
+  rows: e.payments.map((p) => ({ id: p.orderId, text: p.question, amount: p.fee, meta: [p.expert, p.amount + " paid · " + p.expertShare + " to expert"], txHash: p.txHash, at: p.at })),
+  toast: (p) => "+" + p.amount + " USDC · Citable fee",
+})`;
+
+export const earningsPage = (initial: Earnings) => page({ console: "Expert console", listTitle: "Incoming payments", view: EXPERT_VIEW, initial });
+export const citableEarningsPage = (initial: CitableEarnings) => page({ console: "Marketplace", listTitle: "Incoming fees", view: CITABLE_VIEW, initial });
+
+function page(opts: { console: string; listTitle: string; view: string; initial: unknown }): string {
   return `<!doctype html>
 <html lang="en">
 <head>
@@ -68,26 +93,27 @@ export function earningsPage(initial: Earnings): string {
 <body>
 <div class="toast" id="toast"></div>
 <main>
-  <div class="brand"><span>[<span class="check">✓</span>] Citable</span><small>Expert console</small></div>
-  <h1 id="expert"></h1>
-  <p class="sub" id="agent"></p>
+  <div class="brand"><span>[<span class="check">✓</span>] Citable</span><small>${opts.console}</small></div>
+  <h1 id="title"></h1>
+  <p class="sub" id="sub"></p>
 
   <section class="card">
     <span class="live">Live</span>
-    <div class="label">Payout wallet</div>
+    <div class="label" id="bigLabel"></div>
     <div class="balance" id="balance"></div>
-    <div class="stats"><div>Earned on Citable <b id="total"></b></div><div>Answers sold <b id="count"></b></div></div>
+    <div class="stats" id="stats"></div>
   </section>
 
-  <h2>Incoming payments</h2>
+  <h2>${opts.listTitle}</h2>
   <section class="card" style="padding:0"><ul id="payments"></ul></section>
 
-  <footer>Base Sepolia testnet · paid per answer over x402 · wallet <a id="wallet" target="_blank" rel="noopener"></a></footer>
+  <footer>Base Sepolia testnet · paid per answer over x402<span id="walletLine"> · wallet <a id="wallet" target="_blank" rel="noopener"></a></span></footer>
 </main>
 <script>
 const FEED = location.pathname.replace(/\\/$/, "") + "/feed";
 const TX = "https://sepolia.basescan.org/tx/";
 const ADDR = "https://sepolia.basescan.org/address/";
+const view = ${opts.view};
 const $ = (id) => document.getElementById(id);
 let seen = null;
 let shownBalance = null;
@@ -119,31 +145,38 @@ function toast(text) {
   setTimeout(() => t.classList.remove("show"), 3500);
 }
 
-function render(e) {
-  $("expert").textContent = e.agent.expert;
-  $("agent").textContent = e.agent.name;
-  $("total").textContent = e.total + " USDC";
-  $("count").textContent = e.count;
-  $("wallet").textContent = e.agent.payoutAddress.slice(0, 6) + "…" + e.agent.payoutAddress.slice(-4);
-  $("wallet").href = ADDR + e.agent.payoutAddress;
+function render(feed) {
+  const v = view(feed);
+  $("title").textContent = v.title;
+  $("sub").textContent = v.sub;
+  $("bigLabel").textContent = v.bigLabel;
+  $("stats").replaceChildren(...v.stats.map(([label, value]) => {
+    const d = el("div", "", label + " ");
+    d.append(el("b", "", String(value)));
+    return d;
+  }));
+  if (v.wallet) {
+    $("wallet").textContent = v.wallet.slice(0, 6) + "…" + v.wallet.slice(-4);
+    $("wallet").href = ADDR + v.wallet;
+  } else $("walletLine").remove();
 
   if (!$("balance").firstChild) $("balance").append(document.createTextNode(""), el("span", "", "USDC"));
-  const bal = e.balance === null ? null : Number(e.balance);
-  if (bal === null) $("balance").firstChild.textContent = "— ";
-  else animateBalance(bal);
+  if (v.big === null) $("balance").firstChild.textContent = "— ";
+  else animateBalance(v.big);
 
-  const fresh = seen === null ? [] : e.payments.filter((p) => !seen.has(p.orderId));
-  seen = new Set(e.payments.map((p) => p.orderId));
+  const fresh = seen === null ? [] : v.rows.filter((r) => !seen.has(r.id));
+  seen = new Set(v.rows.map((r) => r.id));
 
   const list = $("payments");
   list.replaceChildren();
-  if (e.payments.length === 0) list.append(el("li", "empty", "No answers sold yet. Ask Claude a price question."));
-  for (const p of e.payments) {
-    const li = el("li", fresh.includes(p) ? "new" : "");
-    li.append(el("div", "q", p.question), el("div", "amt", "+" + p.amount + " USDC"));
-    const meta = el("div", "meta", new Date(p.at).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", second: "2-digit" }) + " · ");
-    const a = el("a", "", p.txHash.slice(0, 10) + "…" + p.txHash.slice(-6));
-    a.href = TX + p.txHash; a.target = "_blank"; a.rel = "noopener";
+  if (v.rows.length === 0) list.append(el("li", "empty", "No answers sold yet. Ask Claude a price question."));
+  for (const r of v.rows) {
+    const li = el("li", fresh.includes(r) ? "new" : "");
+    li.append(el("div", "q", r.text), el("div", "amt", "+" + r.amount + " USDC"));
+    const time = new Date(r.at).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", second: "2-digit" });
+    const meta = el("div", "meta", [time, ...r.meta, ""].join(" · "));
+    const a = el("a", "", r.txHash.slice(0, 10) + "…" + r.txHash.slice(-6));
+    a.href = TX + r.txHash; a.target = "_blank"; a.rel = "noopener";
     meta.append(a);
     li.append(meta);
     list.append(li);
@@ -152,7 +185,7 @@ function render(e) {
   if (fresh.length) {
     $("balance").classList.add("bump");
     setTimeout(() => $("balance").classList.remove("bump"), 1500);
-    toast("+" + fresh[0].amount + " USDC · answer sold");
+    toast(v.toast(fresh[0]));
   }
 }
 
@@ -164,7 +197,7 @@ async function poll() {
   setTimeout(poll, ${POLL_MS});
 }
 
-render(${scriptJson(initial)});
+render(${scriptJson(opts.initial)});
 setTimeout(poll, ${POLL_MS});
 </script>
 </body>

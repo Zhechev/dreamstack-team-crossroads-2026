@@ -27,5 +27,6 @@ One file per ticket, grouped by platform. Numbers are global and mostly in depen
 | 21 | Video, slides + submit | Both | Manual | 20 |
 | 22 | Site audit fixes (landing, setup, experts, mobile) | Kris | Lovable | 13, 14, 15, 16 |
 | 24 | Demo split screen: no inline cards, live earnings page | Kris | Claude Code | 12 |
+| 25 | Citable earnings page | Kris | Claude Code | 24 |
 
 Rules: Lovable has its own synced repo (web app only, never creates or alters Supabase tables) and is imported into `apps/web` in ticket 20. Claude Code owns everything else.
