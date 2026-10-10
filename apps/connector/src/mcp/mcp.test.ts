@@ -75,7 +75,7 @@ describe("MCP connector", () => {
       capabilities: {},
       clientInfo: { name: "test", version: "0" },
     });
-    expect(body.result.serverInfo.name).toBe("citable");
+    expect(body.result.serverInfo.name).toBe("app.lovable.citable/connector");
     expect(body.result.instructions).toMatch(/approve_budget/);
   });
 

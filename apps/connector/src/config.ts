@@ -14,6 +14,8 @@ export type Config = {
   gasFunderKey?: Hex;
   /** 32-byte hex key that encrypts problem-wallet keys at rest. */
   problemWalletSecret?: string;
+  /** Public base URL of this service (Server Card links); derived from the request when unset. */
+  publicUrl?: string;
   /** Lovable app: approval links point here. */
   webAppUrl: string;
   /** Extra CORS origins beyond Lovable domains and localhost. */
@@ -44,6 +46,7 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): Config {
     usdcAddress: (env.USDC_ADDRESS || "0x036CbD53842c5426634e7929541eC2318f3dCF7e") as Hex,
     gasFunderKey: (env.GAS_FUNDER_PRIVATE_KEY || undefined) as Hex | undefined,
     problemWalletSecret: env.PROBLEM_WALLET_SECRET || undefined,
+    publicUrl: env.CONNECTOR_PUBLIC_URL || undefined,
     webAppUrl: env.WEB_APP_URL || "http://localhost:5173",
     allowedOrigins: (env.ALLOWED_ORIGINS ?? "").split(",").map((s) => s.trim()).filter(Boolean),
     anthropicApiKey: opt(env.ANTHROPIC_API_KEY),

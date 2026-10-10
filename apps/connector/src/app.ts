@@ -9,6 +9,7 @@ import { supabaseAgentLoader } from "./agents/load.js";
 import { supabaseLinkVerifier, type LinkVerifier } from "./mcp/links.js";
 import { supabaseExpertSearch, type ExpertSearch } from "./mcp/search.js";
 import { createAgentRoutes } from "./routes/agents.js";
+import { createDiscoveryRoutes } from "./routes/discovery.js";
 import { createMcpRoutes } from "./routes/mcp.js";
 import { baseSepoliaChain, type Chain } from "./problems/chain.js";
 import { x402AgentPayer, type AgentPayer } from "./problems/pay.js";
@@ -78,6 +79,8 @@ export function createApp(config: Config, deps: Partial<AppDeps> = {}) {
   };
 
   app.get("/health", (c) => c.json({ ok: true }));
+  // Before /mcp/:token, so /mcp/server-card isn't taken for a token.
+  app.route("/", createDiscoveryRoutes({ publicUrl: config.publicUrl, webAppUrl: config.webAppUrl }));
   app.route("/mcp", createMcpRoutes({ verifyLink, searchExperts, evaluateAgent, problems }));
   app.route("/agents", createAgentRoutes(agentDeps));
   app.route("/problems", createProblemRoutes({ problems, verifyLink, allowedOrigins: config.allowedOrigins }));

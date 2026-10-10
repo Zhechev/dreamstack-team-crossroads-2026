@@ -5,6 +5,7 @@ import { z } from "zod";
 import { FundingError } from "../problems/authorization.js";
 import { AskError } from "../problems/pay.js";
 import { MAX_CAP, type Problems } from "../problems/service.js";
+import { SERVER_NAME, SERVER_VERSION } from "../routes/discovery.js";
 import type { ConnectorLink } from "./links.js";
 import type { ExpertSearch } from "./search.js";
 
@@ -40,9 +41,10 @@ const error = (text: string): CallToolResult => ({ content: [{ type: "text", tex
 export function buildMcpServer(deps: McpDeps, link: ConnectorLink): McpServer {
   const server = new McpServer(
     {
-      name: "citable",
+      // Same identity as the Server Card (routes/discovery.ts), as SEP-2127 asks.
+      name: SERVER_NAME,
       title: "Citable — expert-verified price checks",
-      version: "0.1.0",
+      version: SERVER_VERSION,
       description: "Fair-price checks for property, from local experts' closed deals, every figure cited with source and date.",
     },
     { instructions: INSTRUCTIONS },
