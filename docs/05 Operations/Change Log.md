@@ -6,6 +6,7 @@ updated: 2026-10-10
 
 > One line per change to a decision or plan, newest first.
 
+- 2026-10-10 — **Q-14 closed: gasless buyer approval** (ADR-011). MetaMask signs an EIP-3009 `transferWithAuthorization` of the cap; the connector submits it and pays the gas. Buyer needs only faucet USDC. Payments & Escrow, tickets 11 and 15 updated.
 - 2026-10-10 — **Spike T-09 / ticket 03: GO.** Problem wallet pays x402 on Base Sepolia, failing check is not settled, remainder refunded. Findings recorded in Payments & Escrow, Tech Stack and tickets 08, 09, 11, 12, 15: settle-after-check needs only a 4xx, dedicated RPC needed, gas seed 0.00001 ETH, buyer needs ETH for a plain transfer → new Q-14 (gasless approval).
 - 2026-10-10 — **Stall merged into the connector service** (ADR-007): one Node + Hono service with `/mcp` for Claude and paywalled `/agents/:id/...` routes, still paid over real x402; self-hosted Stall stays a later tier. Lovable gets its own web-only repo, imported into `apps/web` before submission. Build Board now points at the tickets in `issues/`. Stall, System Overview, Tech Stack, Buyer Connector, Team updated.
 - 2026-10-10 — **Decisions locked.** ADR-013 escrow deferred (not in MVP); ADR-017 accepted; problem-wallet gas top-up added to spike T-09. Remaining open items only in Open Questions (headline, take rate, § mark, ChatGPT, fact checks, escrow later).
