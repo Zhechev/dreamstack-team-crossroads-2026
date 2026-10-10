@@ -7,13 +7,13 @@
 
 **Blocked by:** 06 (Edge Functions: search agents, orders, connector links), 10 (MCP connector live in Claude), 13 (Lovable project setup + landing page)
 
-**Status:** ready-for-agent — needs the connector on the hosted Supabase project (links are issued there)
+**Status:** in progress — checked on the live site (citable.lovable.app), 2026-10-10: `/setup` has the three-step guide and one shared connector address (an old tunnel URL); no MetaMask, per-buyer link, top up, Rotate or Revoke yet
 
-- [ ] "Add Citable to Claude" on the landing page leads here
+- [x] "Add Citable to Claude" on the landing page leads here
 - [ ] Connect MetaMask (Base Sepolia); Get link calls `connector_link/issue` with the wallet as owner; the full Claude URL is shown once with a copy button and a warning to keep it private
 - [ ] Top up: amount (default 5.00, max 20.00) → `POST {CONNECTOR_URL}/problems` with the token → sign once (same flow as the /approve page) → funded
 - [ ] Rotate and Revoke call their functions; a revoked link stops working in Claude
-- [ ] Guide: Claude → Settings → Connectors → Add custom connector → paste link (free plan allows one custom connector)
+- [x] Guide: Claude → Settings → Connectors → Add custom connector → paste link (free plan allows one custom connector)
 
 **Starter prompt:**
 > Add a "Set up Citable" page at /setup, reached from "Add Citable to Claude". Three numbered steps on one page, iOS grouped-list style:
