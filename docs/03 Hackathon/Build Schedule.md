@@ -9,10 +9,10 @@ updated: 2026-10-10
 ## Saturday 10 Oct — Planet Schwarz
 | Time | Kris | Mitko |
 |---|---|---|
-| 12:00–14:00 | T-09 MetaMask x402 spike → go/no-go 14:00 · T-10 faucet | T-02 schemas · T-03 Supabase |
+| 12:00–14:00 | T-09 problem-wallet x402 spike → go/no-go 14:00 · T-10 faucet | T-02 schemas · T-03 Supabase |
 | 14:00–18:00 | T-07 connector | T-04 knowledge · T-05 fake-it data |
-| 18:00–21:00 | T-08 Lovable: payment page first, then browse | T-06 Stall `/evaluate` + `/price-check` |
-| 21:00–23:00 | **Integration: first question → evaluation → payment → response from Claude** | same |
+| 18:00–21:00 | T-08 Lovable: approval page first, then browse | T-06 Stall `/evaluate` + `/price-check` |
+| 21:00–23:00 | **Integration: question → evaluation → approval → auto payment → response from Claude** | same |
 
 ## Sunday 11 Oct
 | Time | Kris | Mitko |

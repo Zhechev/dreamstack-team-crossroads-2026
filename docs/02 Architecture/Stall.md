@@ -11,7 +11,7 @@ owner: Mitko
 - **Hono server** with the official x402 middleware; one config per expert agent (sources, rules, prices, version, payout address).
 - **Capabilities (demo):**
   - `POST /evaluate` — **free**; can the agent answer, what it will deliver, price.
-  - `POST /price-check` — tier 1, **0.50 USDC**, x402 `exact`; cited answer; called by the marketplace payment page.
+  - `POST /price-check` — tier 1, **0.50 USDC**, x402 `exact`; cited answer; paid automatically by the connector from the problem wallet.
   - Tier 2 human review and tier 3 consultation — shown on the marketplace, not built in the MVP.
 - **Retrieval:** hybrid search over `units` (base + expert layer) → [[ADR-008 Cited sources with as-of dates]].
 - **Generation:** Claude via Anthropic SDK; claims only from retrieved units; expert rules in the prompt; output JSON with `citations[{unit_id, quote, as_of}]` and identity placeholders.

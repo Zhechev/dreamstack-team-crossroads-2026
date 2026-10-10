@@ -14,9 +14,9 @@ updated: 2026-10-10
 | T-04 | Knowledge: `units` with source + as-of, embed, hybrid search | Claude Code | Mitko | 2.5 | todo |
 | T-05 | Fake-it data: 2–3 labelled demo experts + agents (Expert Verified), synthetic Lozenets deals, public statistics | Claude Code | Mitko | 2 | todo |
 | T-06 | Hosted Stall: `/evaluate` (free), `/price-check` (x402 0.50), citation check before settle, signed outcome → order | Claude Code | Mitko | 5 | todo |
-| T-07 | Connector: `find_expert`, `evaluate`, `pay` (returns payment link), `get_answer`; private link auth; deploy; add to Claude | Claude Code | Kris | 4 | todo |
-| T-08 | Lovable: landing, browse agents (tiers 2–3 shown), payment page, order/receipt view | Lovable | Kris | 4 | todo |
-| T-09 | **Spike:** browser x402 client with MetaMask on Base Sepolia (payment page → Stall) + settle after check | Claude Code | Kris | 2 | todo |
+| T-07 | Connector: `find_expert`, `evaluate`, `approve_budget`, `ask` (auto x402 from problem wallet), `budget_status`, `close_problem`; private link auth; deploy | Claude Code | Kris | 4 | todo |
+| T-08 | Lovable: landing, browse agents (tiers 2–3 shown), budget approval page (MetaMask), receipt view | Lovable | Kris | 4 | todo |
+| T-09 | **Spike:** problem wallet pays x402 on Base Sepolia (`@x402/fetch` + viem) + settle after check | Claude Code | Kris | 2 | todo |
 | T-10 | Fund demo MetaMask wallets with faucet USDC | — | Kris | 0.5 | todo |
 | T-11 | Terms v1 text + hash | — | Mitko | 1 | todo |
 | T-12 | End-to-end run: question → evaluation → payment → response | — | Both | 3 each | todo |

@@ -9,7 +9,7 @@ updated: 2026-10-10
 ## Plan at a glance
 - **What:** your AI assistant hires expert-verified agents and pays per task; the human expert steps in only when it matters. We build the agent, the expert approves it. → [[Product]]
 - **Theme fit:** *AI That Does the Work* — three tiers: ~0.50 automated answer · ~20 human review · 50+ consultation. → [[ADR-019 Three-tier expert funnel]]
-- **Demo:** "Is €180k fair for a 2-bed in Lozenets?" — free evaluation, pay 0.50 in MetaMask, cited price check in Claude. → [[Demo Story]]
+- **Demo:** "Is €180k fair for a 2-bed in Lozenets?" — free evaluation, one capped MetaMask approval, the agent pays 0.50 by itself, cited price check in Claude. → [[Demo Story]]
 - **Stack:** Lovable + Supabase marketplace · hosted Stall agents (TypeScript, x402) · hosted MCP connector in Claude · USDC on Base Sepolia; crypto hidden at the edges in the pitch. → [[Tech Stack]]
 - **Deadline:** submit 8-slide PDF + 2-min MP4 + public GitHub URL by **Sun 11 Oct 14:00**. → [[Hackathon Brief]]
 
@@ -32,4 +32,4 @@ updated: 2026-10-10
 5. **Tasks** live only on the [[Build Board]].
 
 ## Now
-- **Sat 10 Oct:** pivot locked and the whole vault rewritten (see [[Change Log]]). MVP locked: Claude + MetaMask + marketplace + faked verified experts; question → evaluation → payment → response → [[MVP Scope]]. First task: T-09 MetaMask x402 spike, go/no-go 14:00.
+- **Sat 10 Oct:** pivot locked and the whole vault rewritten (see [[Change Log]]). MVP locked: Claude + MetaMask + marketplace + faked verified experts; question → evaluation → one approval → automatic payment → response → [[MVP Scope]]. First task: T-09 MetaMask x402 spike, go/no-go 14:00.

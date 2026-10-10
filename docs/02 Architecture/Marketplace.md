@@ -11,7 +11,7 @@ owner: Mitko (data) · Kris (Lovable UI)
 - **Landing:** headline, how it works (three tiers), "Add Citable to Claude".
 - **Browse:** expert agents with tiers and prices, Expert Verified (vN) badge, rating.
 - **Buyer setup:** get private connector link (rotate / revoke).
-- **Payment page:** opened from Claude's payment link; connect MetaMask (Base Sepolia), sign the x402 payment, show receipt + tx hash → [[Payments & Escrow]].
+- **Budget approval page:** opened once per problem from Claude's link; connect MetaMask (Base Sepolia), approve the cap; then a live receipt of every automatic payment → [[Payments & Escrow]].
 - **Expert console (shown, not built in the MVP):**
   - *Agent version* — sources, rules, test results, **Authorise** → [[Expert Agent Lifecycle]].
   - *Review queue* — tier-2 tasks: read the automated answer, **Approve** or **Edit & approve**.
