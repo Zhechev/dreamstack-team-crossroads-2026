@@ -14,7 +14,7 @@ Team: Kris Georgiev, Mitko Zhechev.
 | `packages/protocol` | Shared zod schemas: Evaluation, Manifest, SignedOutcome, Review, Receipt |
 | `apps/connector` | One hosted service: `/mcp` buyer connector + `/agents/:id/...` expert agent routes + `/problems/:id` budget state. `pnpm --filter @citable/connector dev` |
 | `apps/web` | Lovable app — reserved, imported in ticket 20; don't edit by hand |
-| `supabase/` | Migrations, seed, pgTAP tests; Edge Functions *(coming)* |
+| `supabase/` | Migrations, seed, pgTAP tests, Edge Functions |
 | `knowledge/` | Demo sources, synthetic deal data, seeder and hybrid search (`@citable/knowledge`) |
 | `terms/` | Terms text per version + `hash.mjs` (sha256 stored in `terms_versions`) |
 | `spikes/` | Throwaway proofs (e.g. x402 problem-wallet payment) |
@@ -55,6 +55,31 @@ pnpm --filter @citable/knowledge test:db   # search tests against the running Su
 ```
 
 Run the seeder again after every `supabase db reset`. Deal records are synthetic and labelled so; base passages are illustrative summaries, not real statistics. With `OPENAI_API_KEY` set, the seeder embeds new or changed units with `text-embedding-3-small` and search adds vector ranking. Without it, search uses full-text + trigram only. `search_units(agent, question)` can only be called with the service role.
+
+### Edge Functions
+
+`supabase functions serve` runs them on `http://127.0.0.1:54321/functions/v1`. None needs a Supabase JWT: `create_order` checks the buyer's connector token, and the link actions check the link token. CORS allows `*.lovable.app`, `*.lovableproject.com`, localhost and anything in `ALLOWED_ORIGINS` (comma-separated). On Windows, pass bodies containing `€` with `--data-binary @file.json`: Git Bash re-encodes command-line arguments.
+
+```sh
+F=http://127.0.0.1:54321/functions/v1
+
+# Top 3 authorised agents within budget, best match first, then rating
+curl -X POST $F/search_agents -d '{"question": "Is 180k EUR fair for a 2-bed in Lozenets?", "budget": "2.00"}'
+
+# Private connector link: the token is shown once, only its sha256 is stored
+curl -X POST $F/connector_link/issue  -d '{"owner_address": "0x…", "label": "my Claude"}'   # → {link_id, token}
+curl -X POST $F/connector_link/rotate -d '{"token": "ctb_…"}'                              # → new token, old one revoked
+curl -X POST $F/connector_link/revoke -d '{"token": "ctb_…"}'
+curl -X POST $F/connector_link/verify -d '{"token": "ctb_…"}'                              # used by the connector
+
+# Order for agent + question (agent uuid or slug; capability defaults to price-check)
+curl -X POST $F/create_order -H 'x-connector-token: ctb_…' \
+  -d '{"agent_id": "lozenets-price-check", "question": "Is 180k EUR fair for a 2-bed in Lozenets?"}'
+# → {order_id, status: "awaiting_payment", price: "0.50", pay_to, terms_hash, …}
+
+# Status, answer, citations, citations_verified, tx hash, terms hash
+curl "$F/get_order?id=<order_id>"
+```
 
 ## Licence
 
