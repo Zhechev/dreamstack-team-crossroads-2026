@@ -14,3 +14,5 @@
 - [ ] Each payment appears in the problem-state payments list with its tx hash
 - [ ] `close_problem` refunds the remainder and returns a Receipt (protocol schema) per order
 - [ ] Verified in Claude: question → evaluation → approval → automatic 0.50 payment → cited answer → close
+
+**Spike findings (ticket 03, GO):** compute spent/remaining from settlement receipts (or reads pinned to their block), not from a `latest` balance right after a payment — the public RPC lags. The refund is a normal transfer paid with the seeded ETH.

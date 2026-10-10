@@ -13,4 +13,5 @@ updated: 2026-10-10
 | Q-9 | Take rate per tier (ADR-016) | before slides | — |
 | Q-11 | Keep the § mark (ADR-018)? | before Lovable UI (Sat 18:00) | — |
 | Q-12 | Can ChatGPT pay via x402 today? Mitko's flow assumes it (ADR-010) | before slides | Claude for the demo |
+| Q-14 | Budget approval: plain USDC transfer (buyer needs Base Sepolia ETH) or a gasless EIP-3009 `transferWithAuthorization` the connector submits? (spike, ticket 03) | before ticket 15 | Gasless — one less faucet for the buyer and the judges |
 | Q-13 | Competition and payment facts check (JustAnswer, TollBit, Cloudflare pay-per-crawl, Revolut, Stripe-x402) | before slides | — |

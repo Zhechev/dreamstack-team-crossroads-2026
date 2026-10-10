@@ -14,3 +14,5 @@
 - [ ] Tests: valid outcome passes; a tampered quote, a foreign unit and a wrong as_of each fail
 - [ ] Order exposes a "citations verified" flag the Lovable receipt can show
 - [ ] If cut at Sun 09:00: run the check after settlement and show it as a badge only
+
+**Spike findings (ticket 03, GO):** no settle hook needed. `@x402/hono` verifies the payment before the handler and settles only when the handler returns < 400 — so run the check in the handler and return 422 on failure; the buyer is never charged. Proven on Base Sepolia: a failing check left the seller at +0.00.

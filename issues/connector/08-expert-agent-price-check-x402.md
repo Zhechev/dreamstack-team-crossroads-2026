@@ -14,3 +14,5 @@
 - [ ] Answer says "price check", never "appraisal" or "valuation"; personal details appear only as placeholders (ADR-012)
 - [ ] Order row updated with answer, citations, tx hash and Terms hash (placeholder hash until ticket 19)
 - [ ] Test with a scripted x402 client from the spike: Lozenets question → range + 5 cited comparables
+
+**Spike findings (ticket 03, GO):** reuse `spikes/03-x402-problem-wallet/` — `server.ts` is the route pattern (`@x402/hono` 2.28.0, `ExactEvmScheme` on `eip155:84532`), `run.ts` is the scripted paying client. The settlement tx comes back in the `PAYMENT-RESPONSE` header.
