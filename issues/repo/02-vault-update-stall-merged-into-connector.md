@@ -7,10 +7,10 @@
 
 **Blocked by:** None (can start immediately)
 
-**Status:** ready-for-agent
+**Status:** done
 
-- [ ] ADR-007 Decision section rewritten: expert agent routes live in the connector service; the connector still pays them over real x402; self-hosted Stall remains a later premium tier. `updated:` set
-- [ ] Stall, System Overview, Tech Stack (repo layout + hosting), Buyer Connector, Build Board and Team notes updated to match
-- [ ] Tech Stack records the Lovable rule: Lovable gets its own synced repo (web app only, read-only Supabase use, never creates or alters tables) and is imported into `apps/web` before submission
-- [ ] Build Board points at these tickets (`issues/`) as the task list
-- [ ] One line added to the Change Log
+- [x] ADR-007 Decision section rewritten: expert agent routes live in the connector service; the connector still pays them over real x402; self-hosted Stall remains a later premium tier. `updated:` set
+- [x] Stall, System Overview, Tech Stack (repo layout + hosting), Buyer Connector, Build Board and Team notes updated to match
+- [x] Tech Stack records the Lovable rule: Lovable gets its own synced repo (web app only, read-only Supabase use, never creates or alters tables) and is imported into `apps/web` before submission
+- [x] Build Board points at these tickets (`issues/`) as the task list
+- [x] One line added to the Change Log

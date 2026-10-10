@@ -6,6 +6,7 @@ updated: 2026-10-10
 
 > One line per change to a decision or plan, newest first.
 
+- 2026-10-10 — **Stall merged into the connector service** (ADR-007): one Node + Hono service with `/mcp` for Claude and paywalled `/agents/:id/...` routes, still paid over real x402; self-hosted Stall stays a later tier. Lovable gets its own web-only repo, imported into `apps/web` before submission. Build Board now points at the tickets in `issues/`. Stall, System Overview, Tech Stack, Buyer Connector, Team updated.
 - 2026-10-10 — **Decisions locked.** ADR-013 escrow deferred (not in MVP); ADR-017 accepted; problem-wallet gas top-up added to spike T-09. Remaining open items only in Open Questions (headline, take rate, § mark, ChatGPT, fact checks, escrow later).
 - 2026-10-10 — **Payments: one approval per problem with a hard cap, then the agent pays by itself** (ADR-011 rewritten). Hackathon: MetaMask sends the cap to a fresh problem wallet; connector pays x402 from it; remainder returned. Production: problem-scoped spend permission. Testnet custody exception noted in ADR-002.
 - 2026-10-10 — **MVP defined by the team** (ADR-017 accepted): Claude chat client + MetaMask testnet wallet + marketplace demo + faked verified data and experts; demo shows question → free evaluation → payment → response. Payment via a link to the marketplace page where MetaMask signs x402 (ADR-011). Tiers 2–3 and the expert console shown, not built; escrow out of the MVP. Closed Q-2, Q-3, Q-6, Q-7, Q-8, Q-10. Scope, board, schedule, demo, video, architecture updated.
