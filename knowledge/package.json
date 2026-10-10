@@ -1,0 +1,23 @@
+{
+  "name": "@citable/knowledge",
+  "version": "0.1.0",
+  "private": true,
+  "license": "MIT",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": { "types": "./dist/index.d.ts", "default": "./dist/index.js" }
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run --exclude \"**/*.db.test.ts\"",
+    "test:db": "vitest run db.test",
+    "seed": "tsc -p tsconfig.build.json && node --env-file-if-exists=../.env dist/seed.js"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "2.117.3",
+    "zod": "4.6.5"
+  }
+}

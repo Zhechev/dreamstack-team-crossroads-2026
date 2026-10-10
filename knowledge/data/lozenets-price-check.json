@@ -1,0 +1,54 @@
+{
+  "agent": "lozenets-price-check",
+  "area": "Lozenets, Sofia",
+  "deal_source": "Elena Petrova: closed deals (synthetic)",
+  "passages": [
+    {
+      "key": "base-nsi-sofia-trend",
+      "layer": "base",
+      "source": "NSI housing price statistics (demo summary, illustrative figures)",
+      "source_url": "https://www.nsi.bg",
+      "as_of": "2026-06-30",
+      "text": "Illustrative demo summary: flat prices in Sofia kept rising through the first half of 2026, and Lozenets stays one of the most expensive districts of the city."
+    },
+    {
+      "key": "base-asking-vs-sold",
+      "layer": "base",
+      "source": "Citable market guidance (demo, illustrative)",
+      "source_url": null,
+      "as_of": "2026-09-01",
+      "text": "Asking prices on listing sites are usually higher than the prices flats actually sell for. Compare an offer with recent closed deals, not with asking prices."
+    },
+    {
+      "key": "base-buying-costs",
+      "layer": "base",
+      "source": "Buying a property in Bulgaria: guidance (demo summary, illustrative)",
+      "source_url": "https://www.registryagency.bg",
+      "as_of": "2026-01-01",
+      "text": "The title deed is signed before a notary. On top of the price, the buyer pays notary fees, a registration fee and the local transfer tax set by the municipality. Encumbrances can be checked in the property register before signing."
+    },
+    {
+      "key": "expert-parking-adjustment",
+      "layer": "expert",
+      "source": "Elena Petrova: deal notes (synthetic)",
+      "source_url": null,
+      "as_of": "2026-09-30",
+      "text": "In my Lozenets deals a parking space adds roughly EUR 8,000 to 12,000, and a ground floor or a top floor without a lift sells about 5% below comparable flats."
+    }
+  ],
+  "deals": [
+    { "key": "deal-l01", "bedrooms": 2, "area_m2": 74, "floor": 3, "floors": 6, "built": 2008, "parking": false, "price_eur": 172000, "sold_on": "2026-09-28", "street": "near South Park" },
+    { "key": "deal-l02", "bedrooms": 2, "area_m2": 81, "floor": 5, "floors": 8, "built": 2015, "parking": true, "price_eur": 194000, "sold_on": "2026-09-19", "street": "Cherni Vrah Blvd" },
+    { "key": "deal-l03", "bedrooms": 2, "area_m2": 77, "floor": 2, "floors": 5, "built": 1979, "parking": false, "price_eur": 163000, "sold_on": "2026-09-05", "street": "Krichim St" },
+    { "key": "deal-l04", "bedrooms": 2, "area_m2": 79, "floor": 4, "floors": 7, "built": 2012, "parking": false, "price_eur": 181500, "sold_on": "2026-08-27", "street": "Hristo Smirnenski Blvd" },
+    { "key": "deal-l05", "bedrooms": 2, "area_m2": 72, "floor": 1, "floors": 6, "built": 2010, "parking": false, "price_eur": 158000, "sold_on": "2026-08-14", "street": "Zlaten Rog St" },
+    { "key": "deal-l06", "bedrooms": 2, "area_m2": 84, "floor": 6, "floors": 6, "built": 2006, "parking": true, "price_eur": 199000, "sold_on": "2026-07-30", "street": "Kozyak St" },
+    { "key": "deal-l07", "bedrooms": 2, "area_m2": 76, "floor": 3, "floors": 5, "built": 2018, "parking": false, "price_eur": 178000, "sold_on": "2026-07-21", "street": "Galichitsa St" },
+    { "key": "deal-l08", "bedrooms": 2, "area_m2": 78, "floor": 4, "floors": 6, "built": 2009, "parking": false, "price_eur": 169000, "sold_on": "2026-05-18", "street": "Lyubata St" },
+    { "key": "deal-l09", "bedrooms": 2, "area_m2": 80, "floor": 2, "floors": 6, "built": 2011, "parking": false, "price_eur": 171000, "sold_on": "2026-04-02", "street": "Kozyak St" },
+    { "key": "deal-l10", "bedrooms": 3, "area_m2": 112, "floor": 4, "floors": 7, "built": 2014, "parking": false, "price_eur": 262000, "sold_on": "2026-09-10", "street": "Srebarna St" },
+    { "key": "deal-l11", "bedrooms": 3, "area_m2": 105, "floor": 3, "floors": 6, "built": 2016, "parking": true, "price_eur": 255000, "sold_on": "2026-08-03", "street": "Cherni Vrah Blvd" },
+    { "key": "deal-l12", "bedrooms": 1, "area_m2": 58, "floor": 2, "floors": 5, "built": 2007, "parking": false, "price_eur": 132000, "sold_on": "2026-09-22", "street": "Lozenska Planina St" },
+    { "key": "deal-l13", "bedrooms": 0, "area_m2": 41, "floor": 5, "floors": 8, "built": 2019, "parking": false, "price_eur": 96000, "sold_on": "2026-08-09", "street": "Krichim St" }
+  ]
+}

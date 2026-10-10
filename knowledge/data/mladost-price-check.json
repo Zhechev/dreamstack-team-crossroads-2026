@@ -1,0 +1,21 @@
+{
+  "agent": "mladost-price-check",
+  "area": "Mladost, Sofia",
+  "deal_source": "Georgi Ivanov: closed deals (synthetic)",
+  "passages": [
+    {
+      "key": "base-offplan-vs-completed",
+      "layer": "base",
+      "source": "Citable market guidance (demo, illustrative)",
+      "source_url": null,
+      "as_of": "2026-09-01",
+      "text": "Off-plan flats are sold before the building is finished. Completed buildings with an Act 16 usage permit usually sell at a premium over off-plan flats in the same area."
+    }
+  ],
+  "deals": [
+    { "key": "deal-m01", "bedrooms": 2, "area_m2": 70, "floor": 6, "floors": 12, "built": 2025, "parking": true, "price_eur": 142000, "sold_on": "2026-09-25", "street": "Mladost 4" },
+    { "key": "deal-m02", "bedrooms": 2, "area_m2": 66, "floor": 3, "floors": 8, "built": 2027, "parking": false, "price_eur": 118000, "sold_on": "2026-09-12", "street": "Mladost 1A (off-plan)" },
+    { "key": "deal-m03", "bedrooms": 1, "area_m2": 52, "floor": 4, "floors": 10, "built": 2024, "parking": false, "price_eur": 98000, "sold_on": "2026-08-20", "street": "Studentski grad" },
+    { "key": "deal-m04", "bedrooms": 3, "area_m2": 98, "floor": 7, "floors": 14, "built": 2023, "parking": true, "price_eur": 189000, "sold_on": "2026-08-02", "street": "Mladost 2" }
+  ]
+}
