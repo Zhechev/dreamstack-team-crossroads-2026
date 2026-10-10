@@ -4,11 +4,13 @@ import { generatePrivateKey, privateKeyToAccount } from "viem/accounts";
 import { createApp } from "../app.js";
 import { loadConfig } from "../config.js";
 import type { SignedAuthorization } from "./authorization.js";
+import { AskError, x402AgentPayer, type PaidAnswer } from "./pay.js";
 import type { Chain } from "./chain.js";
 import type { Problem, ProblemStore } from "./store.js";
 import { decryptKey, encryptKey, type Hex } from "./wallet.js";
 
 const SECRET = "11".repeat(32);
+const TERMS = `0x${"f9".repeat(32)}` as Hex;
 const LINK = { id: "link-1", token: "ctb_" + "a".repeat(43) };
 const OTHER = { id: "link-2", token: "ctb_" + "b".repeat(43) };
 
@@ -17,7 +19,7 @@ function memoryStore(): ProblemStore & { rows: Map<string, Problem> } {
   return {
     rows,
     async create(p) {
-      const row: Problem = { id: randomUUID(), ...p, status: "awaiting_funding", buyerAddress: null, fundingTx: null, gasSeedTx: null, createdAt: new Date().toISOString(), payments: [] };
+      const row: Problem = { id: randomUUID(), ...p, status: "awaiting_funding", buyerAddress: null, fundingTx: null, gasSeedTx: null, refundTx: null, refundAmount: null, createdAt: new Date().toISOString(), payments: [] };
       rows.set(row.id, row);
       return structuredClone(row);
     },
@@ -35,6 +37,12 @@ function memoryStore(): ProblemStore & { rows: Map<string, Problem> } {
     async setGasSeed(id, tx) {
       rows.get(id)!.gasSeedTx = tx;
     },
+    async addPayment(id, p) {
+      rows.get(id)!.payments.push({ ...p, termsHash: TERMS, createdAt: new Date().toISOString() });
+    },
+    async markClosed(id, r) {
+      Object.assign(rows.get(id)!, { status: "closed", ...r });
+    },
   };
 }
 
@@ -44,6 +52,7 @@ function fakeChain() {
   const balances = new Map<string, bigint>();
   const submitted: SignedAuthorization[] = [];
   const seeded: Hex[] = [];
+  const refunds: { from: string; to: Hex; amount: bigint }[] = [];
   const chain: Chain = {
     usdcBalance: async (a) => balances.get(a.toLowerCase()) ?? 0n,
     submitAuthorization: async (auth) => {
@@ -54,13 +63,27 @@ function fakeChain() {
       seeded.push(to);
       return tx(2);
     },
+    transferUsdc: async (fromKey, to, amount) => {
+      refunds.push({ from: privateKeyToAccount(fromKey).address, to, amount });
+      return tx(4);
+    },
   };
-  return { chain, balances, submitted, seeded };
+  return { chain, balances, submitted, seeded, refunds };
 }
 
 let store: ReturnType<typeof memoryStore>;
 let fake: ReturnType<typeof fakeChain>;
 let app: ReturnType<typeof createApp>;
+let payer: { calls: { walletAddress: string; agentId: string; question: string; remaining: bigint }[]; next: PaidAnswer | Error };
+
+const outcome = (orderId: string) => ({
+  order_id: orderId,
+  text: "{{full_name}}, a fair range is €172k–€186k for a 2-bed in Lozenets.",
+  citations: [{ unit_id: "unit-12", quote: "182,000 EUR", as_of: "2026-09-15" }],
+  agent_version: "3",
+  created_at: "2026-10-10T12:00:00Z",
+  signature: "0x1234",
+});
 
 beforeEach(() => {
   store = memoryStore();
@@ -69,7 +92,16 @@ beforeEach(() => {
     verifyLink: async (t) => (t === LINK.token ? { id: LINK.id, owner_address: null } : t === OTHER.token ? { id: OTHER.id, owner_address: null } : null),
     problemStore: store,
     chain: fake.chain,
+    agentPayer: {
+      async priceCheck({ walletKey, agentId, question, remaining }) {
+        payer.calls.push({ walletAddress: privateKeyToAccount(walletKey).address, agentId, question, remaining });
+        if (payer.next instanceof Error) throw payer.next;
+        return payer.next;
+      },
+    },
+    unitSources: async (ids) => new Map(ids.map((id) => [id, { source: "Elena Petrova: closed deals", source_url: null }])),
   });
+  payer = { calls: [], next: { ok: true, outcome: outcome(randomUUID()), amount: 500_000n, txHash: tx(3) } };
 });
 
 let nextId = 1;
@@ -194,4 +226,105 @@ describe("budget_status", () => {
 it("encrypts wallet keys reversibly", () => {
   const key = generatePrivateKey();
   expect(decryptKey(encryptKey(key, SECRET), SECRET)).toBe(key);
+});
+
+describe("ask", () => {
+  let id: string;
+  const buyerKey = generatePrivateKey();
+  const fundIt = async () => expect((await fund(id, await signFor(id, buyerKey))).status).toBe(200);
+  beforeEach(async () => {
+    id = (await tool("approve_budget", { cap: "2.00" })).structuredContent.problem_id;
+  });
+
+  it("refuses until the budget is approved, and sends the approval link", async () => {
+    const r = await tool("ask", { agent_id: "lozenets-price-check", question: "Is 180k fair?" });
+    expect(r.isError).toBe(true);
+    expect(r.content[0].text).toContain(`/approve/${id}`);
+    expect(payer.calls).toHaveLength(0);
+  });
+
+  it("pays from the problem wallet and returns the cited answer with sources", async () => {
+    await fundIt();
+    const r = await tool("ask", { agent_id: "lozenets-price-check", question: "Is 180k fair?" });
+    expect(payer.calls[0]).toMatchObject({ walletAddress: store.rows.get(id)!.walletAddress, remaining: 2_000_000n });
+    expect(r.structuredContent).toMatchObject({
+      charged: true,
+      paid: "0.50",
+      remaining: "1.50",
+      tx_hash: tx(3),
+      citations_verified: true,
+      citations: [{ unit_id: "unit-12", quote: "182,000 EUR", as_of: "2026-09-15", source: "Elena Petrova: closed deals" }],
+    });
+    // Placeholders pass through untouched, with the instruction to fill them only in the final reply.
+    expect(r.structuredContent.answer).toContain("{{full_name}}");
+    expect(r.structuredContent.note).toMatch(/final reply/);
+    expect((await getState(id)).payments).toEqual([expect.objectContaining({ amount: "0.50", tx_hash: tx(3) })]);
+    expect((await getState(id)).remaining).toBe("1.50");
+  });
+
+  it("records nothing when the citation check fails (never settled)", async () => {
+    await fundIt();
+    payer.next = { ok: false, reason: "citation_check_failed", orderId: "o-1", failures: ["citation 1: quote not found"] };
+    const r = await tool("ask", { agent_id: "lozenets-price-check", question: "Is 180k fair?" });
+    expect(r.structuredContent).toMatchObject({ charged: false, remaining: "2.00" });
+    expect((await getState(id)).payments).toEqual([]);
+  });
+
+  it("reports a price above what's left as a tool error", async () => {
+    await fundIt();
+    payer.next = new AskError("the price (5 USDC) is more than what's left in the budget (2 USDC)");
+    const r = await tool("ask", { agent_id: "lozenets-price-check", question: "Is 180k fair?" });
+    expect(r.isError).toBe(true);
+    expect(r.content[0].text).toMatch(/more than what's left/);
+  });
+});
+
+describe("close_problem", () => {
+  it("refunds what's left to the buyer and returns a Receipt per paid answer", async () => {
+    const id = (await tool("approve_budget", { cap: "2.00" })).structuredContent.problem_id;
+    const buyerKey = generatePrivateKey();
+    await fund(id, await signFor(id, buyerKey));
+    await tool("ask", { agent_id: "lozenets-price-check", question: "Is 180k fair?" });
+    const wallet = store.rows.get(id)!.walletAddress;
+    fake.balances.set(wallet.toLowerCase(), 1_500_000n);
+
+    const r = await tool("close_problem", {});
+    const buyer = privateKeyToAccount(buyerKey).address;
+    expect(fake.refunds).toEqual([{ from: wallet, to: buyer, amount: 1_500_000n }]);
+    expect(r.structuredContent).toMatchObject({ spent: "0.50", refunded: "1.50", refund_to: buyer, refund_tx: tx(4) });
+    expect(r.structuredContent.receipts).toEqual([
+      { order_id: expect.any(String), tx_hash: tx(3), amount: "0.50", fee: "0.00", terms_hash: TERMS },
+    ]);
+    expect(r.structuredContent.fee_note).toMatch(/waived/);
+    expect((await getState(id)).status).toBe("closed");
+    expect((await tool("close_problem", { problem_id: id })).isError).toBe(true);
+  });
+
+  it("needs refund_to when the budget came in as a plain transfer", async () => {
+    const id = (await tool("approve_budget", { cap: "2.00" })).structuredContent.problem_id;
+    fake.balances.set(store.rows.get(id)!.walletAddress.toLowerCase(), 2_000_000n);
+    await getState(id); // the next read counts the plain transfer as funded
+    expect((await tool("close_problem", {})).isError).toBe(true);
+    const to = privateKeyToAccount(generatePrivateKey()).address;
+    const r = await tool("close_problem", { refund_to: to });
+    expect(r.structuredContent).toMatchObject({ refunded: "2.00", refund_to: to, receipts: [] });
+  });
+});
+
+describe("x402 payer", () => {
+  it("refuses a price above what's left before signing anything", async () => {
+    const required = {
+      x402Version: 2,
+      resource: { url: "http://connector.internal/agents/a/price-check" },
+      accepts: [{ scheme: "exact", network: "eip155:84532", amount: "5000000", asset: "0x036CbD53842c5426634e7929541eC2318f3dCF7e", payTo: "0x000000000000000000000000000000000000dEaD", maxTimeoutSeconds: 60, extra: {} }],
+    };
+    let calls = 0;
+    const fetch = async () => {
+      calls++;
+      return new Response("{}", { status: 402, headers: { "PAYMENT-REQUIRED": Buffer.from(JSON.stringify(required)).toString("base64") } });
+    };
+    const p = x402AgentPayer(fetch as typeof globalThis.fetch);
+    await expect(p.priceCheck({ walletKey: generatePrivateKey(), agentId: "a", question: "q", remaining: 2_000_000n })).rejects.toThrow(/more than what's left/);
+    expect(calls).toBe(1);
+  });
 });

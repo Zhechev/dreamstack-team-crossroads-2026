@@ -3,6 +3,7 @@ import { Evaluation } from "@citable/protocol";
 import { McpServer, type CallToolResult } from "@modelcontextprotocol/server";
 import { z } from "zod";
 import { FundingError } from "../problems/authorization.js";
+import { AskError } from "../problems/pay.js";
 import { MAX_CAP, type Problems } from "../problems/service.js";
 import type { ConnectorLink } from "./links.js";
 import type { ExpertSearch } from "./search.js";
@@ -23,6 +24,8 @@ Flow for a buyer's question:
 2. evaluate — free. Tell the buyer whether the agent can answer, what they will get and the price.
 3. approve_budget — propose a cap (e.g. "2.00" for one 0.50 price check plus room for follow-ups), create the budget and give the buyer the approval link. They approve once in MetaMask; nothing is paid without it.
 4. budget_status — check that the budget is funded before asking an agent anything paid.
+5. ask — once funded: the agent is paid from the budget automatically (no prompt) and returns a cited answer. Show every figure with its source and as-of date.
+6. close_problem — when the buyer is done: the rest of the budget goes back to them; show the receipt.
 Prices are in USDC. Say "price check", never "appraisal" or "valuation".`;
 
 const json = (value: unknown): CallToolResult => ({
@@ -137,6 +140,59 @@ export function buildMcpServer(deps: McpDeps, link: ConnectorLink): McpServer {
       if (!state) return error("No open budget. Call approve_budget first.");
       const { authorization: _, ...rest } = state;
       return json(rest);
+    },
+  );
+
+  server.registerTool(
+    "ask",
+    {
+      title: "Ask the expert agent (paid)",
+      description:
+        "Ask an expert agent the buyer's question. Pays the agent's price (e.g. 0.50 USDC for a price check) from the approved budget " +
+        "automatically — never more than what's left — and returns the answer with citations (source, quote, as-of date). " +
+        "Only after evaluate said can_answer and budget_status shows funded. Every citation was checked before payment; " +
+        "if the check fails nothing is paid. Show each figure with its source and date; fill {{placeholders}} only in your final reply.",
+      inputSchema: z.object({
+        agent_id: z.string().min(1).describe("agent_id from find_expert"),
+        question: z.string().min(1).describe("The buyer's question, without personal details"),
+        problem_id: z.string().optional().describe("problem_id from approve_budget; defaults to the latest open budget"),
+      }),
+      annotations: { readOnlyHint: false, destructiveHint: false, idempotentHint: false, openWorldHint: true },
+    },
+    async ({ agent_id, question, problem_id }) => {
+      try {
+        return json(await deps.problems.ask(link.id, { problemId: problem_id, agentId: agent_id, question }));
+      } catch (e) {
+        if (e instanceof AskError || e instanceof FundingError) return error(e.message);
+        throw e;
+      }
+    },
+  );
+
+  server.registerTool(
+    "close_problem",
+    {
+      title: "Close the budget",
+      description:
+        "When the buyer is done: send what's left of the budget back to the buyer's wallet and return the receipt " +
+        "(one entry per paid answer with its transaction). Ask the buyer before closing if they might have follow-up questions.",
+      inputSchema: z.object({
+        problem_id: z.string().optional().describe("problem_id from approve_budget; defaults to the latest open budget"),
+        refund_to: z
+          .string()
+          .regex(/^0x[0-9a-fA-F]{40}$/)
+          .optional()
+          .describe("Only if the budget was funded by a plain transfer: the buyer's wallet address"),
+      }),
+      annotations: { readOnlyHint: false, destructiveHint: false, idempotentHint: false, openWorldHint: true },
+    },
+    async ({ problem_id, refund_to }) => {
+      try {
+        return json(await deps.problems.close(link.id, { problemId: problem_id, refundTo: refund_to }));
+      } catch (e) {
+        if (e instanceof AskError) return error(e.message);
+        throw e;
+      }
     },
   );
 

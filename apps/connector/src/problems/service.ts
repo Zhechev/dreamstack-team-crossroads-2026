@@ -1,9 +1,11 @@
 // Problems: one capped budget per buyer question (ADR-011). Used by the MCP tools and the /problems routes.
-import { formatUnits, parseUnits } from "viem";
+import { Receipt } from "@citable/protocol";
+import { formatUnits, isAddress, parseUnits } from "viem";
 import { authorizationRequest, FundingError, verifyFunding, type UsdcDomain } from "./authorization.js";
 import type { Chain } from "./chain.js";
+import { AskError, type AgentPayer } from "./pay.js";
 import { usdc, type Problem, type ProblemStore } from "./store.js";
-import { newProblemWallet, type Hex } from "./wallet.js";
+import { decryptKey, newProblemWallet, type Hex } from "./wallet.js";
 
 /** Upper bound for one problem's cap: one Circle faucet round (ADR-015). */
 export const MAX_CAP = "20.00";
@@ -14,7 +16,16 @@ export interface ProblemsDeps {
   usdc: UsdcDomain;
   walletSecret: string;
   webAppUrl: string;
+  payer: AgentPayer;
+  /** Source name and URL per cited unit, so every figure reaches the buyer with its source. */
+  unitSources: (ids: string[]) => Promise<Map<string, { source: string; source_url: string | null }>>;
 }
+
+/** Ticket 12: Claude fills identity placeholders itself; the agent never sees who the buyer is (ADR-012). */
+export const PLACEHOLDER_NOTE =
+  "Placeholders like {{full_name}} are slots for the buyer's details: fill them only in your final reply, never send them back to Citable.";
+
+export const FEE_NOTE = "Citable fee (30% on price checks) waived during the hackathon; the expert received the full amount.";
 
 /** What Claude, the approval page and the receipt see. Never includes the wallet key. */
 export interface ProblemState {
@@ -94,6 +105,80 @@ export function createProblems(deps: ProblemsDeps) {
       const p = problemId ? await deps.store.get(problemId) : await deps.store.latestOpen(linkId);
       if (!p || p.linkId !== linkId) return null;
       return stateOf(await refresh(p));
+    },
+
+    /** Pays the agent from this link's funded budget and returns the cited answer (ticket 12). */
+    async ask(linkId: string, input: { problemId?: string; agentId: string; question: string }) {
+      const found = input.problemId ? await deps.store.get(input.problemId) : await deps.store.latestOpen(linkId);
+      if (!found || found.linkId !== linkId) throw new AskError("No open budget. Call approve_budget first.");
+      const p = await refresh(found);
+      if (p.status === "closed") throw new AskError("This budget is closed. Open a new one with approve_budget.");
+      if (p.status !== "funded") throw new AskError(`The budget isn't approved yet. Send the buyer the approval link: ${approvalUrl(p.id)}`);
+
+      const remaining = units(stateOf(p).remaining);
+      const result = await deps.payer.priceCheck({
+        walletKey: decryptKey(p.keyEnc, deps.walletSecret),
+        agentId: input.agentId,
+        question: input.question,
+        remaining,
+      });
+      if (!result.ok) {
+        return {
+          charged: false as const,
+          reason:
+            result.reason === "citation_check_failed"
+              ? "The agent's answer failed the citation check, so it was not paid for and is not shown."
+              : `The agent could not answer (${result.reason}). Nothing was paid.`,
+          order_id: result.orderId ?? null,
+          remaining: text(remaining),
+        };
+      }
+
+      const { outcome } = result;
+      await deps.store.addPayment(p.id, { amount: text(result.amount), txHash: result.txHash, orderId: outcome.order_id });
+      const sources = await deps.unitSources(outcome.citations.map((c) => c.unit_id));
+      return {
+        charged: true as const,
+        answer: outcome.text,
+        citations: outcome.citations.map((c) => ({ ...c, ...(sources.get(c.unit_id) ?? { source: null, source_url: null }) })),
+        citations_verified: true,
+        order_id: outcome.order_id,
+        agent_version: outcome.agent_version,
+        paid: text(result.amount),
+        tx_hash: result.txHash,
+        remaining: text(remaining - result.amount),
+        note: PLACEHOLDER_NOTE,
+      };
+    },
+
+    /** Refunds what's left to the buyer and returns one Receipt per paid order (ticket 12). */
+    async close(linkId: string, input: { problemId?: string; refundTo?: string }) {
+      const p = input.problemId ? await deps.store.get(input.problemId) : await deps.store.latestOpen(linkId);
+      if (!p || p.linkId !== linkId) throw new AskError("No open budget to close.");
+      if (p.status === "closed") throw new AskError("This budget is already closed.");
+
+      const balance = p.status === "awaiting_funding" ? 0n : await deps.chain.usdcBalance(p.walletAddress);
+      const to = (p.buyerAddress ?? input.refundTo) as Hex | undefined;
+      if (balance > 0n && (!to || !isAddress(to))) {
+        throw new AskError("This budget was funded by a plain transfer, so I need the buyer's address: pass refund_to.");
+      }
+      const refundTx = balance > 0n ? await deps.chain.transferUsdc(decryptKey(p.keyEnc, deps.walletSecret), to!, balance) : null;
+      await deps.store.markClosed(p.id, { refundTx, refundAmount: text(balance) });
+
+      const receipts = p.payments
+        .filter((x) => x.orderId && x.termsHash)
+        .map((x) => Receipt.parse({ order_id: x.orderId, tx_hash: x.txHash, amount: x.amount, fee: "0.00", terms_hash: x.termsHash }));
+      const spent = p.payments.reduce((sum, x) => sum + units(x.amount), 0n);
+      return {
+        problem_id: p.id,
+        cap: p.cap,
+        spent: text(spent),
+        refunded: text(balance),
+        refund_to: balance > 0n ? to! : null,
+        refund_tx: refundTx,
+        receipts,
+        fee_note: FEE_NOTE,
+      };
     },
 
     /** Gasless funding: verify the buyer's signature, submit it, seed gas for the refund. */

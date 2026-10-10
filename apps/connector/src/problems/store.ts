@@ -8,6 +8,8 @@ export interface Payment {
   amount: string;
   txHash: Hex;
   orderId: string | null;
+  /** Terms version the order was placed under (for the receipt). */
+  termsHash: Hex | null;
   createdAt: string;
 }
 
@@ -22,6 +24,8 @@ export interface Problem {
   buyerAddress: Hex | null;
   fundingTx: Hex | null;
   gasSeedTx: Hex | null;
+  refundTx: Hex | null;
+  refundAmount: string | null;
   createdAt: string;
   payments: Payment[];
 }
@@ -33,14 +37,16 @@ export interface ProblemStore {
   latestOpen(linkId: string): Promise<Problem | null>;
   markFunded(id: string, f: { buyerAddress: Hex | null; fundingTx: Hex | null }): Promise<void>;
   setGasSeed(id: string, tx: Hex): Promise<void>;
+  addPayment(id: string, p: { amount: string; txHash: Hex; orderId: string | null }): Promise<void>;
+  markClosed(id: string, r: { refundTx: Hex | null; refundAmount: string }): Promise<void>;
 }
 
 /** Protocol USDC text with 2–6 decimals: 2 → "2.00", 0.125 → "0.125". */
 export const usdc = (n: number | string) => Number(n).toFixed(6).replace(/(\.\d\d\d*?)0+$/, "$1");
 
 const COLUMNS =
-  "id, connector_link_id, wallet_address, wallet_key_enc, cap, status, buyer_address, funding_tx, gas_seed_tx, created_at, " +
-  "problem_payments(amount, tx_hash, order_id, created_at)";
+  "id, connector_link_id, wallet_address, wallet_key_enc, cap, status, buyer_address, funding_tx, gas_seed_tx, refund_tx, refund_amount, created_at, " +
+  "problem_payments(amount, tx_hash, order_id, created_at, orders(terms_hash))";
 
 type Row = {
   id: string;
@@ -52,8 +58,16 @@ type Row = {
   buyer_address: Hex | null;
   funding_tx: Hex | null;
   gas_seed_tx: Hex | null;
+  refund_tx: Hex | null;
+  refund_amount: number | string | null;
   created_at: string;
-  problem_payments: { amount: number | string; tx_hash: Hex; order_id: string | null; created_at: string }[];
+  problem_payments: {
+    amount: number | string;
+    tx_hash: Hex;
+    order_id: string | null;
+    created_at: string;
+    orders: { terms_hash: Hex } | null;
+  }[];
 };
 
 const toProblem = (r: Row): Problem => ({
@@ -66,9 +80,17 @@ const toProblem = (r: Row): Problem => ({
   buyerAddress: r.buyer_address,
   fundingTx: r.funding_tx,
   gasSeedTx: r.gas_seed_tx,
+  refundTx: r.refund_tx,
+  refundAmount: r.refund_amount === null ? null : usdc(r.refund_amount),
   createdAt: r.created_at,
   payments: (r.problem_payments ?? [])
-    .map((p) => ({ amount: usdc(p.amount), txHash: p.tx_hash, orderId: p.order_id, createdAt: p.created_at }))
+    .map((p) => ({
+      amount: usdc(p.amount),
+      txHash: p.tx_hash,
+      orderId: p.order_id,
+      termsHash: p.orders?.terms_hash ?? null,
+      createdAt: p.created_at,
+    }))
     .sort((a, b) => a.createdAt.localeCompare(b.createdAt)),
 });
 
@@ -120,6 +142,22 @@ export function supabaseProblemStore(db: SupabaseClient): ProblemStore {
     },
     async setGasSeed(id, tx) {
       check(await db.from("problems").update({ gas_seed_tx: tx }).eq("id", id), "set gas seed");
+    },
+    async addPayment(id, p) {
+      check(
+        await db.from("problem_payments").insert({ problem_id: id, amount: p.amount, tx_hash: p.txHash, order_id: p.orderId }),
+        "add payment",
+      );
+    },
+    async markClosed(id, r) {
+      check(
+        await db
+          .from("problems")
+          .update({ status: "closed", refund_tx: r.refundTx, refund_amount: r.refundAmount, closed_at: new Date().toISOString() })
+          .eq("id", id)
+          .neq("status", "closed"),
+        "close problem",
+      );
     },
   };
 }

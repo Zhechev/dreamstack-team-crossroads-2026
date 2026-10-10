@@ -11,7 +11,8 @@ import { supabaseExpertSearch, type ExpertSearch } from "./mcp/search.js";
 import { createAgentRoutes } from "./routes/agents.js";
 import { createMcpRoutes } from "./routes/mcp.js";
 import { baseSepoliaChain, type Chain } from "./problems/chain.js";
-import { createProblems } from "./problems/service.js";
+import { x402AgentPayer, type AgentPayer } from "./problems/pay.js";
+import { createProblems, type ProblemsDeps } from "./problems/service.js";
 import { supabaseProblemStore, type ProblemStore } from "./problems/store.js";
 import { createProblemRoutes } from "./routes/problems.js";
 
@@ -21,6 +22,8 @@ export type AppDeps = AgentDeps & {
   searchExperts: ExpertSearch;
   problemStore: ProblemStore;
   chain: Chain;
+  agentPayer: AgentPayer;
+  unitSources: ProblemsDeps["unitSources"];
 };
 
 export function createApp(config: Config, deps: Partial<AppDeps> = {}) {
@@ -42,6 +45,8 @@ export function createApp(config: Config, deps: Partial<AppDeps> = {}) {
       latestOpen: (id) => store().latestOpen(id),
       markFunded: (id, f) => store().markFunded(id, f),
       setGasSeed: (id, tx) => store().setGasSeed(id, tx),
+      addPayment: (id, p) => store().addPayment(id, p),
+      markClosed: (id, r) => store().markClosed(id, r),
     },
     chain,
     usdc: { chainId: config.chainId, usdcAddress: config.usdcAddress },
@@ -50,6 +55,9 @@ export function createApp(config: Config, deps: Partial<AppDeps> = {}) {
       return config.problemWalletSecret;
     },
     webAppUrl: config.webAppUrl,
+    // ask pays this service's own agent routes over real x402 (in-process fetch, real facilitator).
+    payer: deps.agentPayer ?? x402AgentPayer(async (input, init) => app.fetch(new Request(input, init))),
+    unitSources: deps.unitSources ?? ((ids) => unitSourcesFrom(db(), ids)),
   });
   // Expert agent routes (tickets 07–09): defaults share the client and agent loader above.
   const agentDeps = withDefaults(defaultAgentDeps(config, { db, loadAgent }), deps);
@@ -74,6 +82,12 @@ export function createApp(config: Config, deps: Partial<AppDeps> = {}) {
   app.route("/agents", createAgentRoutes(agentDeps));
   app.route("/problems", createProblemRoutes({ problems, allowedOrigins: config.allowedOrigins }));
   return app;
+}
+
+async function unitSourcesFrom(db: SupabaseClient, ids: string[]) {
+  const { data, error } = await db.from("units").select("id, source, source_url").in("id", ids);
+  if (error) throw new Error(`unit sources: ${error.message}`);
+  return new Map((data ?? []).map((u) => [u.id as string, { source: u.source as string, source_url: u.source_url as string | null }]));
 }
 
 const lazy = <T>(make: () => T) => {
