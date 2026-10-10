@@ -135,6 +135,18 @@ export function createProblems(deps: ProblemsDeps) {
   }
 
   /**
+   * The seed only pays for the refund on close, so a failed seed (e.g. the gas funder is out of ETH)
+   * must not fail a top-up whose USDC already landed; close seeds again.
+   */
+  async function trySeedGas(p: Problem) {
+    try {
+      await seedGas(p);
+    } catch (e) {
+      console.error(`gas seed for problem ${p.id} failed; retried on close:`, e instanceof Error ? e.message : e);
+    }
+  }
+
+  /**
    * Catches a cap sent outside the approval page (e.g. a plain MetaMask transfer):
    * once the wallet holds the cap, the problem counts as funded.
    */
@@ -142,7 +154,7 @@ export function createProblems(deps: ProblemsDeps) {
     if (p.status !== "awaiting_funding") return p;
     if ((await deps.chain.usdcBalance(p.walletAddress)) < units(p.cap)) return p;
     await deps.store.markFunded(p.id, { buyerAddress: null, fundingTx: null });
-    await seedGas(p);
+    await trySeedGas(p);
     return (await deps.store.get(p.id))!;
   }
 
@@ -229,6 +241,7 @@ export function createProblems(deps: ProblemsDeps) {
       if (balance > 0n && (!to || !isAddress(to))) {
         throw new AskError("This budget was funded by a plain transfer, so I need the buyer's address: pass refund_to.");
       }
+      if (balance > 0n) await seedGas(p);
       const refundTx = balance > 0n ? await deps.chain.transferUsdc(decryptKey(p.keyEnc, deps.walletSecret), to!, balance) : null;
       await deps.store.markClosed(p.id, { refundTx, refundAmount: text(balance) });
 
@@ -258,7 +271,7 @@ export function createProblems(deps: ProblemsDeps) {
       const auth = await verifyFunding(deps.usdc, p, body);
       const tx = await deps.chain.submitAuthorization(auth);
       await deps.store.markFunded(p.id, { buyerAddress: auth.from, fundingTx: tx });
-      await seedGas(p);
+      await trySeedGas(p);
       return { tx_hash: tx, state: stateOf((await deps.store.get(p.id))!) };
     },
   };
