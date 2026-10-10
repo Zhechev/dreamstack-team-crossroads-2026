@@ -8,6 +8,7 @@ import { MAX_CAP, type Problems } from "../problems/service.js";
 import { SERVER_NAME, SERVER_VERSION } from "../routes/discovery.js";
 import type { ConnectorLink } from "./links.js";
 import type { ExpertSearch } from "./search.js";
+import { EXPERT_CARDS_URI, registerUi, uiMeta } from "./ui.js";
 
 /** Calls an expert agent's free evaluation route and returns its Evaluation unchanged, or null if the agent is unknown. */
 export type AgentEvaluator = (agentId: string, question: string) => Promise<Evaluation | null>;
@@ -68,6 +69,7 @@ export function buildMcpServer(deps: McpDeps, link: ConnectorLink): McpServer {
           .describe('Optional maximum price per answer in USDC, e.g. "2.00"'),
       }),
       annotations: { readOnlyHint: true, openWorldHint: false },
+      _meta: uiMeta(EXPERT_CARDS_URI),
     },
     async ({ question, budget }) => {
       const agents = await deps.searchExperts(question, budget);
@@ -75,6 +77,7 @@ export function buildMcpServer(deps: McpDeps, link: ConnectorLink): McpServer {
       return json({ agents });
     },
   );
+  registerUi(server);
 
   server.registerTool(
     "evaluate",
