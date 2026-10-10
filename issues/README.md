@@ -1,6 +1,6 @@
 # Citable MVP tickets
 
-One file per ticket, grouped by platform. Numbers are global and in dependency order (a ticket only depends on lower numbers). Pick any ticket whose blockers are done.
+One file per ticket, grouped by platform. Numbers are global and mostly in dependency order (22 was added late and blocks 20). Pick any ticket whose blockers are done.
 
 | # | Ticket | Owner | Built with | Blocked by |
 |---|---|---|---|---|
@@ -23,7 +23,8 @@ One file per ticket, grouped by platform. Numbers are global and in dependency o
 | 17 | Receipt view | Kris | Lovable | 12, 15 |
 | 18 | Expert console mock | Kris | Lovable | 14 |
 | 19 | Terms v1 text + hash | Mitko | Manual | — |
-| 20 | End-to-end run, Lovable import, fresh-clone README | Both | Claude Code + manual | 09, 12, 14, 15 |
+| 20 | End-to-end run, Lovable import, fresh-clone README | Both | Claude Code + manual | 09, 12, 14, 15, 22 |
 | 21 | Video, slides + submit | Both | Manual | 20 |
+| 22 | Site audit fixes (landing, setup, experts, mobile) | Kris | Lovable | 13, 14, 15, 16 |
 
 Rules: Lovable has its own synced repo (web app only, never creates or alters Supabase tables) and is imported into `apps/web` in ticket 20. Claude Code owns everything else.
