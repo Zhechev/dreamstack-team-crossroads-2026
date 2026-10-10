@@ -25,6 +25,9 @@ export interface ProblemsDeps {
 export const PLACEHOLDER_NOTE =
   "Placeholders like {{full_name}} are slots for the buyer's details: fill them only in your final reply, never send them back to Citable.";
 
+/** Citable's take on price checks (ADR-016). Shown on receipts, not collected in the MVP. */
+export const FEE_PERCENT = 30n;
+
 export const FEE_NOTE = "Citable fee (30% on price checks) waived during the hackathon; the expert received the full amount.";
 
 /** What Claude, the approval page and the receipt see. Never includes the wallet key. */
@@ -38,10 +41,32 @@ export interface ProblemState {
   funding_tx: Hex | null;
   spent: string;
   remaining: string;
-  payments: { amount: string; tx_hash: Hex; order_id: string | null; created_at: string }[];
+  payments: PaymentState[];
+  /** Set once the budget is closed and the remainder went back to the buyer. */
+  refund_tx: Hex | null;
+  refund_amount: string | null;
   approval_url: string;
+  receipt_url: string;
   /** EIP-712 typed data to sign, only while awaiting funding. */
   authorization?: ReturnType<typeof authorizationRequest>;
+}
+
+/** One payment as the approval page and the receipt (ticket 17) show it. */
+export interface PaymentState {
+  amount: string;
+  tx_hash: Hex;
+  order_id: string | null;
+  created_at: string;
+  capability: string | null;
+  agent: string | null;
+  terms_hash: Hex | null;
+  citations_verified: boolean;
+  /** Fee split of `amount`; the fee is waived during the hackathon, so the expert got the full amount. */
+  expert_share: string;
+  fee: string;
+  fee_waived: true;
+  /** Only on the public state (GET /problems/:id): source and date of each cited figure, no quotes. */
+  citations?: { source: string | null; source_url: string | null; as_of: string }[];
 }
 
 const units = (s: string) => parseUnits(s, 6);
@@ -49,6 +74,39 @@ const text = (n: bigint) => usdc(formatUnits(n, 6));
 
 export function createProblems(deps: ProblemsDeps) {
   const approvalUrl = (id: string) => `${deps.webAppUrl.replace(/\/$/, "")}/approve/${id}`;
+  const receiptUrl = (id: string) => `${deps.webAppUrl.replace(/\/$/, "")}/receipt/${id}`;
+
+  function paymentOf(x: Problem["payments"][number]): PaymentState {
+    const fee = (units(x.amount) * FEE_PERCENT) / 100n;
+    return {
+      amount: x.amount,
+      tx_hash: x.txHash,
+      order_id: x.orderId,
+      created_at: x.createdAt,
+      capability: x.order?.capability || null,
+      agent: x.order?.agent || null,
+      terms_hash: x.termsHash,
+      citations_verified: x.order?.citationsVerified ?? false,
+      expert_share: text(units(x.amount) - fee),
+      fee: text(fee),
+      fee_waived: true,
+    };
+  }
+
+  /** The public state plus where each cited figure came from, for the receipt. */
+  async function withSources(p: Problem): Promise<ProblemState> {
+    const state = stateOf(p);
+    const ids = p.payments.flatMap((x) => x.order?.citations.map((c) => c.unit_id) ?? []);
+    const sources = ids.length ? await deps.unitSources([...new Set(ids)]) : new Map();
+    state.payments = state.payments.map((s, i) => ({
+      ...s,
+      citations: (p.payments[i].order?.citations ?? []).map((c) => ({
+        ...(sources.get(c.unit_id) ?? { source: null, source_url: null }),
+        as_of: c.as_of,
+      })),
+    }));
+    return state;
+  }
 
   function stateOf(p: Problem): ProblemState {
     const spent = p.payments.reduce((sum, x) => sum + units(x.amount), 0n);
@@ -62,8 +120,11 @@ export function createProblems(deps: ProblemsDeps) {
       funding_tx: p.fundingTx,
       spent: text(spent),
       remaining: text(units(p.cap) - spent),
-      payments: p.payments.map((x) => ({ amount: x.amount, tx_hash: x.txHash, order_id: x.orderId, created_at: x.createdAt })),
+      payments: p.payments.map(paymentOf),
+      refund_tx: p.refundTx,
+      refund_amount: p.refundAmount,
       approval_url: approvalUrl(p.id),
+      receipt_url: receiptUrl(p.id),
       ...(p.status === "awaiting_funding" ? { authorization: authorizationRequest(deps.usdc, p.walletAddress, p.cap) } : {}),
     };
   }
@@ -103,7 +164,7 @@ export function createProblems(deps: ProblemsDeps) {
     /** Public problem state by id (the approval page, the receipt). */
     async state(id: string): Promise<ProblemState | null> {
       const p = await deps.store.get(id);
-      return p ? stateOf(await refresh(p)) : null;
+      return p ? withSources(await refresh(p)) : null;
     },
 
     /** budget_status for one buyer link: the given problem if it is theirs, else their latest open one. */
@@ -182,6 +243,7 @@ export function createProblems(deps: ProblemsDeps) {
         refunded: text(balance),
         refund_to: balance > 0n ? to! : null,
         refund_tx: refundTx,
+        receipt_url: receiptUrl(p.id),
         receipts,
         fee_note: FEE_NOTE,
         next: "The budget is closed. For another paid answer the buyer tops up again: call approve_budget and send the top-up link (one signature, no gas).",

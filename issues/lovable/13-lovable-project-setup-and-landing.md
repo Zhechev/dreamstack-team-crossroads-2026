@@ -16,6 +16,12 @@
 - [ ] Landing page live on the Lovable URL, mobile-first, iOS feel, Brand colours and type
 - [ ] Rule followed: nobody edits the Lovable repo by hand while someone is prompting Lovable
 
+## Fix: point the app at the hosted connector (2026-10-10)
+
+> In the settings file `src/config.ts`, set CONNECTOR_URL to "https://citable-connector.onrender.com" (no trailing slash). Change nothing else. Every page that talks to the connector (/setup, /approve) must read it from there.
+
+Check after: `/setup` shows `https://citable-connector.onrender.com/mcp`, and an `/approve/<id>` link from Claude loads.
+
 ## How to build it in Lovable (prompts drafted 2026-10-10)
 
 Wording follows ADR-014 (headline, seller line, claims) and Brand (colours, type, [✓] mark). Paste each block as one Lovable message, check the preview, then move on.
