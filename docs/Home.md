@@ -17,7 +17,7 @@ updated: 2026-10-10
 | Folder | Notes |
 |---|---|
 | Root | [[Home]] · [[Glossary]] · [[System Map.canvas\|System Map]] |
-| 01 Product | [[Product]] · [[Demo Story]] · [[Business Model]] · [[Trust & Legal]] · [[Brand]] |
+| 01 Product | [[Product]] · [[Landing Page]] · [[Demo Story]] · [[Business Model]] · [[Trust & Legal]] · [[Brand]] |
 | 02 Architecture | [[Expert Agent Lifecycle]] · [[Tech Stack]] · [[System Overview]] · [[Marketplace]] · [[Stall]] · [[Buyer Connector]] · [[Payments & Escrow]] · [[Data Model]] |
 | 03 Hackathon | [[Hackathon Brief]] · [[MVP Scope]] · [[Build Board]] · [[Build Schedule]] · [[Demo Video Script]] · [[Pitch Deck]] · [[Team]] |
 | 04 Decisions | [[ADR Index]] — one record per decision |

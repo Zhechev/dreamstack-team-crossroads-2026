@@ -6,6 +6,7 @@ updated: 2026-10-10
 
 > One line per change to a decision or plan, newest first.
 
+- 2026-10-10 — **Positioning: global expert marketplace, not a Sofia/Varna home-buying tool** (Kris, for investors). Hero drops "your next home / for buyers in Sofia and Varna"; real estate becomes the first live vertical. New [[Landing Page]] with money-flow and why-it-scales sections plus the Lovable prompt; Product and Pitch Deck updated.
 - 2026-10-10 — **No "(synthetic)" labels in the demo** (Kris: as real as possible). Deal records read "Closed deal: …" and sources "Elena Petrova: closed deals"; the agents' source lists dropped the label too. The data is still synthetic and marked `synthetic: true` inside each unit's data (internal, never shown). Applied to the seed, knowledge data, local and hosted databases.
 - 2026-10-10 — **Top up once instead of approving per question** (ADR-011, Kris). The buyer tops up a budget once on the setup page (one gasless signature); Claude then pays agents from it inside the chat, question after question; `approve_budget` only when it runs low; `close_problem` withdraws the rest. Connector reuses one open budget per link; new `POST /problems` for the setup page. Payments & Escrow, Buyer Connector, System Overview, MVP Scope, Demo Story, video script, tickets 15/16 updated.
 - 2026-10-10 — **No demo labels on experts in the MVP** (Kris). Seeded experts stay fictional but are no longer labelled "Demo expert, fictional" in the listing, the connector or the Lovable app. Deal data keeps its "(synthetic)" source labels for now.

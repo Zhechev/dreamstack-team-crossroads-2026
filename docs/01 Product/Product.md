@@ -9,7 +9,7 @@ updated: 2026-10-10
 ## One line
 **Ask your AI. Get an answer an expert stands behind.**
 
-Your AI assistant hires expert-verified agents and pays per task — and brings in the human expert only when it matters.
+**The global expert marketplace for AI assistants.** Your AI assistant hires expert-verified agents and pays per task — and brings in the human expert only when it matters. Any field; real estate is the first live vertical. Landing copy: [[Landing Page]].
 
 For experts: *"We build your agent. You approve it. It brings you clients."*
 
@@ -38,7 +38,8 @@ The AI handles the volume; the expert enters only where their time adds value.
 ## The moat
 The expert's **fresh and private knowledge**. *"ChatGPT knows asking prices. Our agents know what actually sold last month."*
 
-## Launch vertical: real estate
+## First live vertical: real estate
+Proof that the pipeline works, not the product's limit; the same pipeline takes any expert field.
 "Is €180k fair for a 2-bed in Lozenets?" → price check with comparable sales → agent's review → viewing. Same pipeline later for renovation quotes and used cars. → [[Demo Story]]
 
 ## Promises
