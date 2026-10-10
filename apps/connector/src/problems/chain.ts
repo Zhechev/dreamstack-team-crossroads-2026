@@ -14,6 +14,8 @@ export interface Chain {
   submitAuthorization(auth: SignedAuthorization): Promise<Hex>;
   /** Sends GAS_SEED ETH from the gas funder; resolves once mined. */
   seedGas(to: Hex): Promise<Hex>;
+  /** A plain USDC transfer signed by a problem wallet (the remainder refund); gas comes from its seed. */
+  transferUsdc(fromKey: Hex, to: Hex, amount: bigint): Promise<Hex>;
 }
 
 const transferWithAuthorizationAbi = [
@@ -66,6 +68,12 @@ export function baseSepoliaChain(opts: { rpcUrl: string; usdcAddress: Hex; gasFu
 
     async seedGas(to) {
       return mined(await funder().sendTransaction({ to, value: GAS_SEED }), "gas seed");
+    },
+
+    async transferUsdc(fromKey, to, amount) {
+      const wallet = createWalletClient({ account: privateKeyToAccount(fromKey), chain: baseSepolia, transport });
+      const hash = await wallet.writeContract({ address: opts.usdcAddress, abi: erc20Abi, functionName: "transfer", args: [to, amount] });
+      return mined(hash, "refund");
     },
   };
 }

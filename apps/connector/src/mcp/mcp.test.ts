@@ -81,7 +81,7 @@ describe("MCP connector", () => {
 
   it("lists the buyer tools", async () => {
     const { body } = await rpc("tools/list");
-    expect(body.result.tools.map((t: { name: string }) => t.name).sort()).toEqual(["approve_budget", "budget_status", "evaluate", "find_expert"]);
+    expect(body.result.tools.map((t: { name: string }) => t.name).sort()).toEqual(["approve_budget", "ask", "budget_status", "close_problem", "evaluate", "find_expert"]);
   });
 
   it("find_expert returns the top agents from search", async () => {
