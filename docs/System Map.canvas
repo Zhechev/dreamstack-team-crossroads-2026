@@ -54,7 +54,7 @@
    "y": 40,
    "width": 260,
    "height": 60,
-   "file": "02 Architecture/Buyer Connector.md"
+   "file": "docs/02 Architecture/Buyer Connector.md"
   },
   {
    "id": "mkt",
@@ -63,7 +63,7 @@
    "y": 40,
    "width": 260,
    "height": 60,
-   "file": "02 Architecture/Marketplace.md"
+   "file": "docs/02 Architecture/Marketplace.md"
   },
   {
    "id": "supa",
@@ -109,7 +109,7 @@
    "y": 40,
    "width": 280,
    "height": 60,
-   "file": "02 Architecture/Stall.md"
+   "file": "docs/02 Architecture/Stall.md"
   },
   {
    "id": "corp",
@@ -146,7 +146,7 @@
    "y": 640,
    "width": 260,
    "height": 60,
-   "file": "02 Architecture/Payments & Escrow.md"
+   "file": "docs/02 Architecture/Payments & Escrow.md"
   },
   {
    "id": "esc",
