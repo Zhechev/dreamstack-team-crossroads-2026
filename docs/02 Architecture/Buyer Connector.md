@@ -5,25 +5,25 @@ owner: Kris
 ---
 # Buyer Connector
 
-> The hosted MCP server that lets Claude find and pay expert agents. Decision: [[ADR-010 Buyer connector in Claude]].
+> The hosted MCP server that lets Claude find, evaluate and pay expert agents. Decision: [[ADR-010 Buyer connector in Claude]].
 
-## Tools
+## Tools — question → evaluation → payment → response
 | Tool | Does |
 |---|---|
-| `search_agents(need, max_price)` | Top 3 expert agents with tiers and prices |
-| `price_check(agent_id, question)` | Tier 1: handles the 402, pays 0.50, returns the cited answer |
-| `request_review(order_id)` | Tier 2: pays 20, creates the expert review task |
-| `get_review(order_id)` | Pending, or the *Reviewed by* answer |
-| `rate(order_id, rating)` | Stores the rating |
-| `budget_status()` | Demo wallet balance / remaining limit |
+| `find_expert(question, max_price)` | Top 3 verified expert agents for the question |
+| `evaluate(agent_id, question)` | **Free.** Agent says whether it can answer, what it will deliver, and the price |
+| `pay(agent_id, question)` | Creates an order; returns a **payment link** to the marketplace payment page |
+| `get_answer(order_id)` | Pending payment, or the cited answer + tx hash |
 
-Tier 3 (`book_consultation`) is shown, not built.
+Tier 2 review and tier 3 consultation are shown on the marketplace, not built.
+
+## Why a payment link
+Claude chat cannot open MetaMask, and a hosted connector must not hold the buyer's key. The payment page acts as the x402 client: it calls Stall, gets the 402, MetaMask signs, the page retries, and the answer is stored on the order for `get_answer`. → [[Payments & Escrow]]
 
 ## Rules
-- Hackathon: pays from a pre-funded, labelled demo wallet (proposed, Q-2); pitch path → [[ADR-020 Crypto hidden at the edges]].
 - Passes identity placeholders through untouched → [[ADR-012 Identity placeholders]].
 - Authenticates by **private link** `/mcp/<token>` (256-bit, stored hashed; rotate/revoke on the web app).
-- Stores order metadata only; outcomes pass through.
+- Stores order metadata only.
 
 ## Works in
 Claude web, desktop and mobile, every plan (free plan: one custom connector). ChatGPT pending Q-12.

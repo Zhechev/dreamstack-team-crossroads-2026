@@ -17,7 +17,7 @@ updated: 2026-10-10
 | Knowledge | `units` table with source + as-of, Postgres FTS + pg_trgm + pgvector (Drizzle) | [[ADR-008 Cited sources with as-of dates\|008]] |
 | Citation check | Deterministic check before settle | [[ADR-009 Deterministic citation judge\|009]] |
 | Buyer connector | Hosted remote MCP (Streamable HTTP, MCP TS SDK + Hono), added to Claude via private link | [[ADR-010 Buyer connector in Claude\|010]] |
-| Payments | x402 `exact`, USDC, Base Sepolia, x402.org facilitator; demo wallet | [[ADR-001 Payments with x402 and USDC on Base\|001]] · [[ADR-020 Crypto hidden at the edges\|020]] |
+| Payments | x402 `exact`, USDC, Base Sepolia, x402.org facilitator; buyer's MetaMask signs on the payment page | [[ADR-001 Payments with x402 and USDC on Base\|001]] · [[ADR-020 Crypto hidden at the edges\|020]] |
 | Hosting | Lovable hosting (web) · Supabase (data, functions) · one small Node host for connector + Stall (e.g. Fly.io/Render) | [[ADR-006 Marketplace on Lovable and Supabase\|006]] |
 
 ## Repo layout

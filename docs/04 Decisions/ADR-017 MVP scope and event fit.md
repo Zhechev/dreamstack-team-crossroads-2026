@@ -1,12 +1,12 @@
 ---
 type: adr
 id: ADR-017
-status: Under review
+status: Accepted
 updated: 2026-10-10
 ---
 # ADR-017 MVP scope and event fit
 
-> **Under review (2026-10-10):** [[MVP Scope]], [[Build Board]] and [[Build Schedule]] were re-planned for the new plan and are *proposed* until confirmed ([[Open Questions]] Q-3). The format rules below still hold.
+> **2026-10-10:** MVP re-defined by the team: Claude chat client + MetaMask testnet wallet + marketplace demo + faked verified data and experts; the demo shows question → evaluation → payment → response.
 
 ## Context
 ~29 build hours, two people; judges see a 2-minute video, 8 slides and a public repo.

@@ -6,8 +6,8 @@ updated: 2026-10-10
 
 | Person | Strength | Owns |
 |---|---|---|
-| Kris Georgiev | Solidity, payments, product | x402 spike, buyer connector, Lovable app + expert console, wallet funding, slides, repo (T-01, 08–11, 15) |
-| Mitko Zhechev | Backend & data | Protocol schemas, Supabase, knowledge pipeline + demo data, hosted Stall, eval + authorise, Terms (T-02–07, 12) |
+| Kris Georgiev | Solidity, payments, product | MetaMask x402 spike, buyer connector, Lovable app + payment page, wallet funding, slides, repo (T-01, 07–10, 14) |
+| Mitko Zhechev | Backend & data | Protocol schemas, Supabase, knowledge + fake-it data, hosted Stall (evaluate, price check, citation check), Terms (T-02–06, 11) |
 
-Both: T-13 integration and T-14 video. Contact Kris: k.georgiev@investclub.bg
+Both: T-12 integration and T-13 video. Contact Kris: k.georgiev@investclub.bg
 Team skills note: strongest in Laravel/PHP; TypeScript is written mostly with Claude Code.

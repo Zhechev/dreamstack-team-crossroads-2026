@@ -10,8 +10,9 @@ owner: Mitko (data) · Kris (Lovable UI)
 ## Web app (Lovable)
 - **Landing:** headline, how it works (three tiers), "Add Citable to Claude".
 - **Browse:** expert agents with tiers and prices, Expert Verified (vN) badge, rating.
-- **Buyer setup:** get private connector link (rotate / revoke); demo wallet note.
-- **Expert console (mobile-first):**
+- **Buyer setup:** get private connector link (rotate / revoke).
+- **Payment page:** opened from Claude's payment link; connect MetaMask (Base Sepolia), sign the x402 payment, show receipt + tx hash → [[Payments & Escrow]].
+- **Expert console (shown, not built in the MVP):**
   - *Agent version* — sources, rules, test results, **Authorise** → [[Expert Agent Lifecycle]].
   - *Review queue* — tier-2 tasks: read the automated answer, **Approve** or **Edit & approve**.
   - *Orders* — status, revenue, ratings.
@@ -25,10 +26,9 @@ RLS: public read on agents and capabilities; writes through Edge Functions.
 | Function | Called by | Does |
 |---|---|---|
 | `search_agents` | Connector | Filter by need and budget, return top 3 |
-| `submit_review` | Expert console | Approve / edit a tier-2 answer |
-| `get_review` | Connector | Return review status or final answer |
-| `authorise_version` | Expert console | Mark version authorised → badge |
-| `rate` | Connector | Store rating signed by the paying key |
+| `create_order` | Connector | Order for agent + question → payment link |
+| `get_order` | Connector, payment page | Status, answer, tx hash |
+Later: `submit_review`, `authorise_version`, `rate`.
 
 ## Ranking
-MVP: verified agents within budget sorted by rating → [[ADR-004 Capabilities, reputation and ranking]].
+MVP: seeded verified agents within budget sorted by rating → [[ADR-004 Capabilities, reputation and ranking]].

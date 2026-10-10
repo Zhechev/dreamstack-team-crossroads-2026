@@ -31,7 +31,7 @@ Top 5 → mentoring + Crossroads Pitch Competition (29 Oct) → San Francisco pi
 ## Judging
 | Official criterion | Website asks | Discord adds | Our proof |
 |---|---|---|---|
-| **Working prototype** | Functional, end to end? | — | Testnet flow from Claude: pay 0.50 → cited price check → pay 20 → expert approves on phone → reviewed answer; repo runs from README |
+| **Working prototype** | Functional, end to end? | — | Testnet flow from Claude: question → free evaluation → pay 0.50 in MetaMask → cited answer; repo runs from README |
 | **Use of AI** | Thoughtful, effective AI? | Technical implementation; innovation & creativity | Claude answers only from retrieved, dated units under expert rules; citations machine-checked before payment settles; Claude is the buyer agent via MCP, paying over HTTP 402 |
 | **Problem and impact** | Clear problem, who it helps? | Impact & scalability | Any Claude user; any expert sells without building anything; any field (real estate first, then renovation, cars) |
 | **Execution and demo** | Works well, presented clearly? | Presentation | One story, one headline, rehearsed 3-min pitch |

@@ -10,6 +10,8 @@ updated: 2026-10-10
 A hosted connector cannot hold the buyer's key; holding keys would make us custodial.
 
 ## Decision
+**MVP (2026-10-10):** the buyer pays from their own **MetaMask on Base Sepolia** by signing the x402 payment on the marketplace payment page, reached from a link Claude gives. The ERC-7715 spend permission below is a stretch goal.
+
 **Hackathon only** (pitch path: [[ADR-020 Crypto hidden at the edges|ADR-020]]). Buyers bring their own **MetaMask** and grant an **ERC-7715 periodic USDC permission** (e.g. 20/day, 30 days, revocable) to the connector's session key. Real users top up via MetaMask Buy on Base; demo wallets are funded from faucets.
 
 ## Consequences

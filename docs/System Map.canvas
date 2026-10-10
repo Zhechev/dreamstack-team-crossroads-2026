@@ -35,7 +35,7 @@
    "y": 270,
    "width": 260,
    "height": 80,
-   "text": "**Wallet**\ndemo wallet (hackathon) \u00b7 card top-up (next)"
+   "text": "**MetaMask**\nBase Sepolia USDC \u00b7 signs on the payment page"
   },
   {
    "id": "gc",
@@ -145,7 +145,7 @@
    "y": 150,
    "width": 280,
    "height": 90,
-   "text": "**Expert console** (phone)\nauthorise version \u00b7 review queue \u00b7 orders"
+   "text": "**Expert console** (shown, not built)\nauthorise version \u00b7 review queue"
   },
   {
    "id": "gch",
@@ -205,7 +205,7 @@
    "id": "e4",
    "fromNode": "wallet",
    "toNode": "fac",
-   "label": "x402 payment",
+   "label": "signs x402 on payment page",
    "color": "2"
   },
   {

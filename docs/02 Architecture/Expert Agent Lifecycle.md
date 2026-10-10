@@ -35,4 +35,4 @@ Tiers: automated answer (~0.50) → human review (~20, expert approves or edits)
 `new source detected → knowledge updated → tests re-run → expert reviews only significant changes → new version authorised`. Ongoing expert work stays minimal.
 
 ## Hackathon cut
-Steps 1–5 for one demo expert; the eval run (step 4) may be seeded as already authorised if time is short ([[MVP Scope]]). Step 6 is shown, not built.
+Fake it till we make it: demo experts and agents are seeded, labelled and already *Expert Verified*; steps 1–4 and 6 are shown, not run. Step 5 is live for tier 1, with a free **evaluation** before payment ([[MVP Scope]]).
